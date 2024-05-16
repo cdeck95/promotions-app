@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import Image from "next/image";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -43,7 +44,17 @@ export const columns: ColumnDef<Promotion>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
-    cell: (info) => (info.getValue() as string).toString(),
+    cell: (info) => {
+      const id = info.getValue() as string;
+      const imageUrl = info.row.getValue("image") as string;
+      return (
+        <Image src={imageUrl} alt={id} width={400} height={400} />
+        // <div>
+        //   {id.toString()}
+        //   <Image src={imageUrl} alt={id} width={400} height={400} />
+        // </div>
+      );
+    },
   },
   {
     accessorKey: "platform",
@@ -51,6 +62,9 @@ export const columns: ColumnDef<Promotion>[] = [
       <DataTableColumnHeader column={column} title="Platform" />
     ),
     cell: (info) => (info.getValue() as string).toString(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     accessorKey: "code",

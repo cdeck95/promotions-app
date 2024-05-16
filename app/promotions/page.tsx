@@ -125,7 +125,7 @@ const promotions: Promotion[] = [
 
 export default async function DemoPage() {
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 flex flex-col gap-4">
       <ModeToggle />
       <DataTable columns={columns} data={promotions} />
     </div>

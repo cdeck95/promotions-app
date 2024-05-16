@@ -13,6 +13,17 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
+export const platforms = [
+  {
+    value: "Fanduel",
+    label: "Fanduel",
+  },
+  {
+    value: "Draftkings",
+    label: "Draftkings",
+  },
+];
+
 export function DataTableToolbar<TData>({
   searchName,
   table,
@@ -23,7 +34,7 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter by platform..."
+          placeholder="Filter by title..."
           value={
             (table.getColumn(searchName)?.getFilterValue() as string) ?? ""
           }
@@ -32,13 +43,13 @@ export function DataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {/* {table.getColumn("status") && (
+        {table.getColumn("platform") && (
           <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={statuses}
+            column={table.getColumn("platform")}
+            title="Platform"
+            options={platforms}
           />
-        )} */}
+        )}
         {isFiltered && (
           <Button
             variant="ghost"
