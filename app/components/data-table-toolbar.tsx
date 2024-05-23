@@ -7,28 +7,54 @@ import { Input } from "@/components/ui/input";
 import DataTableViewOptions from "./data-table-view-options";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { columnHeadersArrayPromotions } from "./columns";
+import { useMemo } from "react";
 
 interface DataTableToolbarProps<TData> {
   searchName: string;
   table: Table<TData>;
 }
 
-export const platforms = [
-  {
-    value: "Fanduel",
-    label: "Fanduel",
-  },
-  {
-    value: "Draftkings",
-    label: "Draftkings",
-  },
-];
-
 export function DataTableToolbar<TData>({
   searchName,
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  // Assuming `tableData` is the data fed into the table
+  const uniquePlatforms = useMemo(() => {
+    const values = table
+      .getCoreRowModel()
+      .flatRows.map((row) => row.getValue("platform")) as string[];
+    return Array.from(new Set(values));
+  }, [table]);
+
+  console.log("uniquePlatforms", uniquePlatforms);
+
+  // Convert the Set to an array and map it to the format needed for the options
+  const platformOptions = Array.from(uniquePlatforms).map((platform) => ({
+    value: platform,
+    label: platform,
+  }));
+
+  console.log("leagueOptions", platformOptions);
+
+  // Assuming `tableData` is the data fed into the table
+  const uniqueLeagues = useMemo(() => {
+    const values = table
+      .getCoreRowModel()
+      .flatRows.map((row) => row.getValue("leagueName")) as string[];
+    return Array.from(new Set(values));
+  }, [table]);
+
+  console.log("uniqueLeagues", uniqueLeagues);
+
+  // Convert the Set to an array and map it to the format needed for the options
+  const leagueOptions = Array.from(uniqueLeagues).map((league) => ({
+    value: league,
+    label: league,
+  }));
+
+  console.log("leagueOptions", leagueOptions);
 
   return (
     <div className="flex items-center justify-between">
@@ -47,7 +73,14 @@ export function DataTableToolbar<TData>({
           <DataTableFacetedFilter
             column={table.getColumn("platform")}
             title="Platform"
-            options={platforms}
+            options={platformOptions}
+          />
+        )}
+        {table.getColumn("leagueName") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("leagueName")}
+            title="League"
+            options={leagueOptions}
           />
         )}
         {isFiltered && (

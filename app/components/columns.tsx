@@ -25,6 +25,7 @@ export interface Promotion {
   url: string;
   image: string;
   datetime: Date;
+  leagueName: string;
 }
 
 export const columnHeadersArrayPromotions: { [key: string]: string } = {
@@ -36,6 +37,7 @@ export const columnHeadersArrayPromotions: { [key: string]: string } = {
   url: "URL",
   image: "Image",
   datetime: "Date",
+  leagueName: "League",
 };
 
 export const columns: ColumnDef<Promotion>[] = [
@@ -48,12 +50,21 @@ export const columns: ColumnDef<Promotion>[] = [
       const id = info.getValue() as string;
       const imageUrl = info.row.getValue("image") as string;
       return (
-        <Image src={imageUrl} alt={id} width={400} height={400} />
-        // <div>
-        //   {id.toString()}
-        //   <Image src={imageUrl} alt={id} width={400} height={400} />
-        // </div>
+        <div>
+          {id.toString()}
+          {/* <Image src={imageUrl} alt={id} width={400} height={400} /> */}
+        </div>
       );
+    },
+  },
+  {
+    accessorKey: "leagueName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="League" />
+    ),
+    cell: (info) => (info.getValue() as string).toString(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -88,19 +99,24 @@ export const columns: ColumnDef<Promotion>[] = [
     cell: (info) => (info.getValue() as string).toString(),
   },
   {
+    accessorKey: "image",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Image" />
+    ),
+    cell: (info) => {
+      const id = info.getValue() as string;
+      const imageUrl = info.row.getValue("image") as string;
+      return <Image src={imageUrl} alt={id} width={400} height={400} />;
+    },
+  },
+  {
     accessorKey: "url",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="URL" />
     ),
     cell: (info) => (info.getValue() as string).toString(),
   },
-  {
-    accessorKey: "image",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Image" />
-    ),
-    cell: (info) => (info.getValue() as string).toString(),
-  },
+
   {
     accessorKey: "datetime",
     header: ({ column }) => (
