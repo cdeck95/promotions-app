@@ -13,20 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export interface Promotion {
-  id: number;
-  platform: string;
-  code: string;
-  title: string;
-  description: string;
-  url: string;
-  image: string;
-  datetime: Date;
-  leagueName: string;
-}
+import Promotion from "@/lib/models/Promotion";
 
 export const columnHeadersArrayPromotions: { [key: string]: string } = {
   id: "ID",
