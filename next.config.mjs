@@ -20,6 +20,22 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "**.betmgm.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.io",
+      },
+      {
+        protocol: "https",
+        hostname: "**.ag",
+      },
+      {
+        protocol: "https",
         hostname: "**.cloudfront.net",
       },
     ],

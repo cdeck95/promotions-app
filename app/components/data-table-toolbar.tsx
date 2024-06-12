@@ -25,6 +25,7 @@ export function DataTableToolbar<TData>({
     const values = table
       .getCoreRowModel()
       .flatRows.map((row) => row.getValue("platform")) as string[];
+    console.log("values", values);
     return Array.from(new Set(values));
   }, [table]);
 
