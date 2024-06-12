@@ -1,6 +1,18 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+  // disable: process.env.NODE_ENV === "development", // Disable PWA in development mode
+  // register: true, // Register the PWA service worker
+  // skipWaiting: true, // Skip waiting for service worker activation
+});
+
+const nextConfig = withPWA({
   reactStrictMode: true,
+  // swcMinify: true, // Enable SWC minification for improved performance
+  // compiler: {
+  //   removeConsole: process.env.NODE_ENV !== "development", // Remove console.log in production
+  // },
   env: {
     DB_HOST: process.env.DB_HOST,
     DB_USER: process.env.DB_USER,
@@ -40,6 +52,6 @@ const nextConfig = {
       },
     ],
   },
-};
+});
 
 export default nextConfig;

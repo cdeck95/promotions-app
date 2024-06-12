@@ -1,0 +1,15 @@
+{
+  "name": "Rush 2 Wager - Promos App",
+  "short_name": "R2W - Promos App",
+  "icons": [
+    {
+      "src": "/webicon.png",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#09A888",
+  "background_color": "#FFFFFF",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}
