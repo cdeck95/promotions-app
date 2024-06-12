@@ -28,30 +28,31 @@ export const columnHeadersArrayPromotions: { [key: string]: string } = {
 };
 
 export const columns: ColumnDef<Promotion>[] = [
+  // {
+  //   accessorKey: "id",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="ID" />
+  //   ),
+  //   cell: (info) => {
+  //     const id = info.getValue() as string;
+  //     const imageUrl = info.row.getValue("image") as string;
+  //     return (
+  //       <div>
+  //         {id.toString()}
+  //         {/* <Image src={imageUrl} alt={id} width={400} height={400} /> */}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
-    accessorKey: "id",
+    accessorKey: "image",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <DataTableColumnHeader column={column} title="Image" />
     ),
     cell: (info) => {
       const id = info.getValue() as string;
       const imageUrl = info.row.getValue("image") as string;
-      return (
-        <div>
-          {id.toString()}
-          {/* <Image src={imageUrl} alt={id} width={400} height={400} /> */}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "leagueName",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="League" />
-    ),
-    cell: (info) => (info.getValue() as string).toString(),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      return <Image src={imageUrl} alt={id} width={400} height={400} />;
     },
   },
   {
@@ -63,13 +64,6 @@ export const columns: ColumnDef<Promotion>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
-  },
-  {
-    accessorKey: "code",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Code" />
-    ),
-    cell: (info) => (info.getValue() as string).toString(),
   },
   {
     accessorKey: "title",
@@ -86,24 +80,45 @@ export const columns: ColumnDef<Promotion>[] = [
     cell: (info) => (info.getValue() as string).toString(),
   },
   {
-    accessorKey: "image",
+    accessorKey: "leagueName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Image" />
+      <DataTableColumnHeader column={column} title="League" />
     ),
-    cell: (info) => {
-      const id = info.getValue() as string;
-      const imageUrl = info.row.getValue("image") as string;
-      return <Image src={imageUrl} alt={id} width={400} height={400} />;
+    cell: (info) => (info.getValue() as string).toString(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
     },
   },
+  {
+    accessorKey: "code",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Code" />
+    ),
+    cell: (info) => {
+      const code = info.getValue() as string;
+      const url = info.row.getValue("url") as string;
+      return (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          {code}
+        </a>
+      );
+    },
+  },
+
   {
     accessorKey: "url",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="URL" />
     ),
-    cell: (info) => (info.getValue() as string).toString(),
+    cell: (info) => {
+      const url = info.getValue() as string;
+      return (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          {url}
+        </a>
+      );
+    },
   },
-
   {
     accessorKey: "datetime",
     header: ({ column }) => (

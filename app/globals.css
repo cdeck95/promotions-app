@@ -68,6 +68,16 @@
     --primary-green: #09a888;
     --dark-green: #28474a;
   }
+
+  a {
+    color: var(--primary-green);
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--dark-green);
+    }
+  }
 }
 
 @layer base {

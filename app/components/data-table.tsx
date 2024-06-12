@@ -66,11 +66,36 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
+  const maxTableWidth = 1500 > screenWidth ? screenWidth : 1500;
+  console.log("maxTableWidth", maxTableWidth);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className="space-y-4" style={{ maxWidth: "93dvw" }}>
+    <div
+      className="space-y-4"
+      style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
+    >
       <DataTableToolbar searchName={"title"} table={table} />
-      <div className="rounded-md border">
-        <Table>
+      <div
+        className="rounded-md border"
+        style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
+      >
+        <Table style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

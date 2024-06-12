@@ -8,6 +8,7 @@ import DataTableViewOptions from "./data-table-view-options";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { columnHeadersArrayPromotions } from "./columns";
 import { useMemo } from "react";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
 interface DataTableToolbarProps<TData> {
   searchName: string;
@@ -95,10 +96,13 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions
-        table={table}
-        columnHeaders={columnHeadersArrayPromotions}
-      />
+      <div className="flex items-center space-x-2">
+        <ModeToggle />
+        <DataTableViewOptions
+          table={table}
+          columnHeaders={columnHeadersArrayPromotions}
+        />
+      </div>
     </div>
   );
 }
