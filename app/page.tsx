@@ -35,7 +35,13 @@ export default function Home() {
 
   return (
     <main className="flex flex-col min-h-screen w-full items-start justify-center p-8 gap-4">
-      <Image src={Rush2WagerLogo} alt="Logo" width={300} height={300} />
+      <Image
+        src={Rush2WagerLogo}
+        alt="Logo"
+        width={300}
+        height={300}
+        className="flex justify-center items-center m-auto"
+      />
       {!loading && <DataTable columns={columns} data={promotions} />}
     </main>
   );

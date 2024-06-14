@@ -87,12 +87,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <div
-      className="space-y-4"
+      className="space-y-4 ml-auto mr-auto"
       style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
     >
       <DataTableToolbar searchName={"title"} table={table} />
       <div
-        className="rounded-md border"
+        className="rounded-md border w-full m-auto justify-center"
         style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
       >
         <Table style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}>
