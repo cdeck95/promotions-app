@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import Promotion from "@/lib/models/Promotion";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 export const columnHeadersArrayPromotions: { [key: string]: string } = {
   id: "ID",
@@ -23,7 +25,7 @@ export const columnHeadersArrayPromotions: { [key: string]: string } = {
   description: "Description",
   url: "URL",
   image: "Image",
-  datetime: "Date",
+  postedDatetime: "Posted Date",
   leagueName: "League",
 };
 
@@ -68,23 +70,47 @@ export const columns: ColumnDef<Promotion>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader
+        column={column}
+        title="Title"
+        className="min-w-[200px]"
+      />
     ),
     cell: (info) => (info.getValue() as string).toString(),
   },
   {
     accessorKey: "description",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Description" />
+      <DataTableColumnHeader
+        column={column}
+        title="Description"
+        className="min-w-[250px]"
+      />
     ),
-    cell: (info) => (info.getValue() as string).toString(),
+    cell: (info) => {
+      return (
+        <div className="flex flex-row min-w-fit items-center justify-start gap-2">
+          {/* <Label className="text-sm min-w-fit text-ellipsis"> */}
+          {info.getValue() as string}
+          {/* </Label> */}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "leagueName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="League" />
     ),
-    cell: (info) => (info.getValue() as string).toString(),
+    cell: (info) => {
+      const leagueName = info.getValue() as string;
+      if (!leagueName) return null;
+      return (
+        <div className="flex flex-row min-w-fit items-center justify-start gap-2">
+          <Badge className="text-sm">{leagueName}</Badge>
+        </div>
+      );
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
@@ -108,21 +134,32 @@ export const columns: ColumnDef<Promotion>[] = [
   {
     accessorKey: "url",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="URL" />
+      <DataTableColumnHeader
+        column={column}
+        title="URL"
+        className="max-w-[150px]"
+      />
     ),
     cell: (info) => {
       const url = info.getValue() as string;
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer">
-          {url}
-        </a>
+        <div className="flex flex-row max-w-[150px] items-center justify-start gap-2">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="overflow-ellipsis overflow-hidden whitespace-nowrap"
+          >
+            Click here
+          </a>
+        </div>
       );
     },
   },
   {
-    accessorKey: "datetime",
+    accessorKey: "postedDatetime",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date" />
+      <DataTableColumnHeader column={column} title="Posted Date" />
     ),
     cell: (info) => (info.getValue() as string).toString(),
   },

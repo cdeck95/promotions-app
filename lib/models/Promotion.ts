@@ -10,7 +10,7 @@ export interface PromotionAttributes {
   description: string;
   url: string;
   image: string;
-  datetime: Date;
+  postedDatetime: Date;
   leagueName: string;
   createdAt: Date;
   updatedAt: Date;
@@ -30,7 +30,7 @@ class Promotion
   public description!: string;
   public url!: string;
   public image!: string;
-  public datetime!: Date;
+  public postedDatetime!: Date;
   public leagueName!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -67,7 +67,7 @@ Promotion.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    datetime: {
+    postedDatetime: {
       type: DataTypes.DATE,
       allowNull: false,
     },
