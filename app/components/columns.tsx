@@ -150,7 +150,7 @@ export const columns: ColumnDef<Promotion>[] = [
             rel="noopener noreferrer"
             className="overflow-ellipsis overflow-hidden whitespace-nowrap"
           >
-            Click here
+            <strong>Click Here</strong>
           </a>
         </div>
       );

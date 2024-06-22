@@ -95,7 +95,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div
-      className="space-y-4 ml-auto mr-auto"
+      className="space-y-4 mr-auto ml-auto"
       style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
     >
       <DataTableToolbar searchName={"title"} table={table} />
@@ -125,6 +125,7 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
+                // add green bg for featured promos
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}

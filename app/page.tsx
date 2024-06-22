@@ -42,7 +42,11 @@ export default function Home() {
         height={300}
         className="flex justify-center items-center m-auto"
       />
-      {!loading && <DataTable columns={columns} data={promotions} />}
+      {!loading && (
+        <div className="grid grid-cols-1 gap-8 w-full ml-auto mr-auto">
+          <DataTable columns={columns} data={promotions} />
+        </div>
+      )}
     </main>
   );
 }

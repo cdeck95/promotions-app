@@ -11,7 +11,7 @@ export interface PromotionAttributes {
   url: string;
   image: string;
   postedDatetime: Date;
-  leagueName: string;
+  leagueName: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,7 +31,7 @@ class Promotion
   public url!: string;
   public image!: string;
   public postedDatetime!: Date;
-  public leagueName!: string;
+  public leagueName!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
