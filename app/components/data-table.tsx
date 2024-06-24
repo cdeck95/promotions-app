@@ -26,16 +26,14 @@ import {
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import React from "react";
+import Promotion from "@/lib/models/Promotion";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  columns: ColumnDef<Promotion>[];
+  data: Promotion[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -45,7 +43,7 @@ export function DataTable<TData, TValue>({
 
   const initialSorting: SortingState = [
     {
-      id: "postedDatetime",
+      id: "postedDateTime",
       desc: true,
     },
   ];
@@ -93,6 +91,8 @@ export function DataTable<TData, TValue>({
     };
   }, []);
 
+  console.log("Data", data);
+
   return (
     <div
       className="space-y-4 mr-auto ml-auto"
@@ -129,6 +129,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className={row.original.featured ? "featured" : ""}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -156,4 +157,4 @@ export function DataTable<TData, TValue>({
       <DataTablePagination table={table} />
     </div>
   );
-}
+};

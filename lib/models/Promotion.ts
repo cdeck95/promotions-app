@@ -10,10 +10,11 @@ export interface PromotionAttributes {
   description: string;
   url: string;
   image: string;
-  postedDatetime: Date;
+  postedDateTime: Date;
   leagueName: string | null;
   createdAt: Date;
   updatedAt: Date;
+  featured: boolean;
 }
 
 interface PromotionCreationAttributes
@@ -30,10 +31,11 @@ class Promotion
   public description!: string;
   public url!: string;
   public image!: string;
-  public postedDatetime!: Date;
+  public postedDateTime!: Date;
   public leagueName!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public featured!: boolean;
 }
 
 Promotion.init(
@@ -67,7 +69,7 @@ Promotion.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    postedDatetime: {
+    postedDateTime: {
       type: DataTypes.DATE,
       allowNull: false,
     },
@@ -81,6 +83,10 @@ Promotion.init(
     },
     createdAt: {
       type: DataTypes.DATE,
+      allowNull: false,
+    },
+    featured: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
     },
   },

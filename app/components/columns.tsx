@@ -25,8 +25,9 @@ export const columnHeadersArrayPromotions: { [key: string]: string } = {
   description: "Description",
   url: "URL",
   image: "Image",
-  postedDatetime: "Posted Date",
+  postedDateTime: "Posted Date",
   leagueName: "League",
+  featured: "Featured",
 };
 
 export const columns: ColumnDef<Promotion>[] = [
@@ -157,11 +158,28 @@ export const columns: ColumnDef<Promotion>[] = [
     },
   },
   {
-    accessorKey: "postedDatetime",
+    accessorKey: "postedDateTime",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Posted Date" />
     ),
     cell: (info) => (info.getValue() as string).toString(),
+  },
+  {
+    accessorKey: "featured",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Featured" />
+    ),
+    cell: (info) => {
+      const featured = info.getValue() as boolean;
+      return (
+        <div className="flex flex-row min-w-fit items-center justify-start gap-2">
+          {featured ? <Badge className="text-sm">Featured</Badge> : null}
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     id: "actions",

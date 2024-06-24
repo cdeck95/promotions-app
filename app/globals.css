@@ -37,6 +37,10 @@
     --dark-green: #28474a;
   }
 
+  .featured {
+    background-color: var(--dark-green);
+  }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
