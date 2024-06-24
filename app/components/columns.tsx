@@ -16,6 +16,7 @@ import Image from "next/image";
 import Promotion from "@/lib/models/Promotion";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 export const columnHeadersArrayPromotions: { [key: string]: string } = {
   id: "ID",
@@ -162,7 +163,7 @@ export const columns: ColumnDef<Promotion>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Posted Date" />
     ),
-    cell: (info) => (info.getValue() as string).toString(),
+    cell: (info) => format(new Date(info.getValue() as string), "MM/dd/yyyy"),
   },
   {
     accessorKey: "featured",
