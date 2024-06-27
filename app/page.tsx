@@ -51,7 +51,7 @@ export default function Home() {
       />
       {!loading && (
         <div className="grid grid-cols-1 gap-8 w-full ml-auto mr-auto">
-          <Label>Date 72 hours ago: {date72HoursAgo.toDateString()}</Label>
+          {/* <Label>Date 72 hours ago: {date72HoursAgo.toDateString()}</Label> */}
           <DataTable columns={columns} data={promotions} />
         </div>
       )}
