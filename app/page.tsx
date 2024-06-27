@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import Promotion from "@/lib/models/Promotion";
 import Rush2WagerLogo from "@/public/main_logo_fullsize.png";
 import Image from "next/image";
+import moment from "moment";
+import { Label } from "@/components/ui/label";
 
 export default function Home() {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
@@ -33,6 +35,11 @@ export default function Home() {
     fetchPromotions();
   }, []);
 
+  // 1. Calculate the date 72 hours ago from now using moment
+  const date72HoursAgo = moment().subtract(72, "hours").toDate();
+
+  console.log("Date 72 hours ago:", date72HoursAgo);
+
   return (
     <main className="flex flex-col min-h-screen w-full items-start justify-center p-8 gap-4">
       <Image
@@ -44,6 +51,7 @@ export default function Home() {
       />
       {!loading && (
         <div className="grid grid-cols-1 gap-8 w-full ml-auto mr-auto">
+          <Label>Date 72 hours ago: {date72HoursAgo.toDateString()}</Label>
           <DataTable columns={columns} data={promotions} />
         </div>
       )}
