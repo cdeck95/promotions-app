@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import MenuHeader from "./components/menuheader";
+import SideMenu from "./components/sidemenu";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -59,15 +62,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {" "}
-        <link rel="icon" href="./favicon.ico" sizes="any" />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Toaster />
+          <div className="flex row-auto w-full h-full">
+            <SideMenu />
+            <div className="w-full">
+              <MenuHeader />
+              <main className="p-0 main-overflow">{children}</main>
+            </div>
+          </div>
         </ThemeProvider>
       </body>
     </html>

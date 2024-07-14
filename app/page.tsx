@@ -41,20 +41,20 @@ export default function Home() {
   console.log("Date 72 hours ago:", date72HoursAgo);
 
   return (
-    <main className="flex flex-col min-h-screen w-full items-start justify-center p-8 gap-4">
-      <Image
+    <div className="grid gridcol-1 min-h-screen w-full items-start p-8 gap-4">
+      {/* <Image
         src={Rush2WagerLogo}
         alt="Logo"
         width={300}
         height={300}
         className="flex justify-center items-center m-auto"
-      />
+      /> */}
       {!loading && (
         <div className="grid grid-cols-1 gap-8 w-full ml-auto mr-auto">
           {/* <Label>Date 72 hours ago: {date72HoursAgo.toDateString()}</Label> */}
           <DataTable columns={columns} data={promotions} />
         </div>
       )}
-    </main>
+    </div>
   );
 }

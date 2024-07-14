@@ -111,7 +111,6 @@ export function DataTableToolbar<TData>({
         </div>
       </div>
       <div className="flex items-center space-x-2">
-        <ModeToggle />
         <DataTableViewOptions
           table={table}
           columnHeaders={columnHeadersArrayPromotions}
