@@ -17,7 +17,12 @@ export default function Home() {
   async function fetchPromotions() {
     try {
       setLoading(true);
-      const response = await fetch("/api/promotions");
+      const response = await fetch("/api/promotions", {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-store'
+        }
+      });
       if (!response.ok) {
         setLoading(false);
         throw new Error("Network response was not ok");
@@ -30,6 +35,7 @@ export default function Home() {
       setLoading(false);
     }
   }
+
 
   useEffect(() => {
     fetchPromotions();
