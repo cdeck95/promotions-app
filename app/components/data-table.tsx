@@ -95,7 +95,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
 
   return (
     <div
-      className="space-y-4 mr-auto ml-auto"
+      className="grid grid-cols-1 gap-4 w-full h-full"
       style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
     >
       <DataTableToolbar searchName={"title"} table={table} />

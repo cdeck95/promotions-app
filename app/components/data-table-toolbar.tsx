@@ -89,7 +89,7 @@ export function DataTableToolbar<TData>({
 
   return (
     <div className="flex flex-row items-start justify-between">
-      <div className="flex flex-1 flex-col lg:flex-row justify-center items-start space-x-2 gap-4 w-full">
+      <div className="flex flex-1 flex-col lg:flex-row lg:w-full justify-start items-start space-x-2 gap-4 w-full">
         <Input
           placeholder="Filter by title..."
           value={
@@ -100,27 +100,40 @@ export function DataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        <div className="flex flex-row gap-1 w-full !ml-0">
-          {table.getColumn("platform") && (
-            <DataTableFacetedFilter
-              column={table.getColumn("platform")}
-              title="Platform"
-              options={platformOptions}
-            />
-          )}
-          {table.getColumn("leagueName") && (
-            <DataTableFacetedFilter
-              column={table.getColumn("leagueName")}
-              title="League"
-              options={leagueOptions}
-            />
-          )}
+        <div className="flex flex-col gap-1 !ml-0">
+          <div className="flex flex-row gap-1 w-full !ml-0">
+            {table.getColumn("platform") && (
+              <DataTableFacetedFilter
+                column={table.getColumn("platform")}
+                title="Platform"
+                options={platformOptions}
+              />
+            )}
+            {table.getColumn("leagueName") && (
+              <DataTableFacetedFilter
+                column={table.getColumn("leagueName")}
+                title="League"
+                options={leagueOptions}
+              />
+            )}
+            {table.getColumn("applicableState") && (
+              <div className="hidden lg:flex">
+                <DataTableFacetedFilter
+                  column={table.getColumn("applicableState")}
+                  title="State"
+                  options={stateOptions}
+                />
+              </div>
+            )}
+          </div>
           {table.getColumn("applicableState") && (
-            <DataTableFacetedFilter
-              column={table.getColumn("applicableState")}
-              title="State"
-              options={stateOptions}
-            />
+            <div className="lg:hidden">
+              <DataTableFacetedFilter
+                column={table.getColumn("applicableState")}
+                title="State"
+                options={stateOptions}
+              />
+            </div>
           )}
           {isFiltered && (
             <Button

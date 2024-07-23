@@ -18,10 +18,10 @@ export default function Home() {
     try {
       setLoading(true);
       const response = await fetch("/api/promotions", {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Cache-Control': 'no-store'
-        }
+          "Cache-Control": "no-store",
+        },
       });
       if (!response.ok) {
         setLoading(false);
@@ -36,7 +36,6 @@ export default function Home() {
     }
   }
 
-
   useEffect(() => {
     fetchPromotions();
   }, []);
@@ -47,7 +46,7 @@ export default function Home() {
   console.log("Date 72 hours ago:", date72HoursAgo);
 
   return (
-    <div className="grid gridcol-1 min-h-screen w-full items-start p-8 gap-4">
+    <div className="grid gridcol-1 min-h-screen w-full items-start p-4 lg:p-8 gap-4">
       {/* <Image
         src={Rush2WagerLogo}
         alt="Logo"
