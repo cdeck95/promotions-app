@@ -182,6 +182,21 @@ export const columns: ColumnDef<Promotion>[] = [
       return value.includes(row.getValue(id));
     },
   },
+  {
+    accessorKey: "applicableState",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Applicable State" />
+    ),
+    cell: (info) => {
+      const applicableState = info.getValue() as string;
+      if (!applicableState) return null;
+      return (
+        <div className="flex flex-row min-w-fit items-center justify-start gap-2">
+          <Badge className="text-sm">{applicableState}</Badge>
+        </div>
+      );
+    },
+  },
   // {
   //   id: "actions",
   //   cell: ({ row }) => {

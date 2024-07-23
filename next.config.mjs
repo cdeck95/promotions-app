@@ -36,6 +36,11 @@ const nextConfig = withPWA({
       },
       {
         protocol: "https",
+        hostname: "**.thescore.bet",
+      },
+
+      {
+        protocol: "https",
         hostname: "**.com",
       },
       {

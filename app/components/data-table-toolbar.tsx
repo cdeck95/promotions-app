@@ -59,6 +59,23 @@ export function DataTableToolbar<TData>({
 
   console.log("leagueOptions", leagueOptions);
 
+  const uniqueStates = useMemo(() => {
+    const values = table
+      .getCoreRowModel()
+      .flatRows.map((row) => row.getValue("applicableState")) as string[];
+    return Array.from(new Set(values));
+  }, [table]);
+
+  console.log("uniqueStates", uniqueStates);
+
+  // Convert the Set to an array and map it to the format needed for the options
+  const stateOptions = Array.from(uniqueStates).map((state) => ({
+    value: state,
+    label: state,
+  }));
+
+  console.log("stateOptions", stateOptions);
+
   const [isMobile, setIsMobile] = React.useState(false);
   const handleResize = () => {
     setIsMobile(window.innerWidth < 1024);
@@ -96,6 +113,13 @@ export function DataTableToolbar<TData>({
               column={table.getColumn("leagueName")}
               title="League"
               options={leagueOptions}
+            />
+          )}
+          {table.getColumn("applicableState") && (
+            <DataTableFacetedFilter
+              column={table.getColumn("applicableState")}
+              title="State"
+              options={stateOptions}
             />
           )}
           {isFiltered && (

@@ -15,6 +15,7 @@ export interface PromotionAttributes {
   createdAt: Date;
   updatedAt: Date;
   featured: boolean;
+  applicableState: string | null;
 }
 
 interface PromotionCreationAttributes
@@ -36,6 +37,7 @@ class Promotion
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public featured!: boolean;
+  public applicableState!: string | null;
 }
 
 Promotion.init(
@@ -88,6 +90,10 @@ Promotion.init(
     featured: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+    },
+    applicableState: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {
