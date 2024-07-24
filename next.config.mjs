@@ -11,6 +11,7 @@ const nextConfig = withPWA({
   reactStrictMode: true,
   experimental: {
     serverComponentsExternalPackages: ["sequelize", "sequelize-typescript"],
+    serverActions: true,
   },
   // swcMinify: true, // Enable SWC minification for improved performance
   // compiler: {
