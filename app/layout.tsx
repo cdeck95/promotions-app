@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import MenuHeader from "./components/menuheader";
 import SideMenu from "./components/sidemenu";
 import { Toaster } from "@/components/ui/toaster";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -73,7 +74,9 @@ export default function RootLayout({
             <SideMenu />
             <div className="w-full">
               <MenuHeader />
-              <main className="p-0 main-overflow">{children}</main>
+              <main className="p-0 main-overflow">
+                <ScrollArea className="w-full h-full">{children}</ScrollArea>
+              </main>
             </div>
           </div>
         </ThemeProvider>

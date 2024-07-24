@@ -35,6 +35,8 @@
     --radius: 0.5rem;
     --primary-green: #09a888;
     --dark-green: #28474a;
+    height: 100dvh;
+    width: 100dvw;
   }
 
   .featured {
@@ -82,6 +84,17 @@
       color: var(--dark-green);
     }
   }
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  max-width: 100dvw;
+}
+
+.main-overflow {
+  overflow: auto !important;
+  height: calc(100vh - 4rem);
 }
 
 @layer base {

@@ -20,6 +20,7 @@ import {
   BellRing,
   CalendarPlus,
   CalendarSearch,
+  CirclePlus,
   Currency,
   Home,
   LayoutDashboard,
@@ -148,6 +149,19 @@ function SideMenu() {
               >
                 <NotebookText className="h-4 w-4" />
                 Promos
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant={pathname === "/add-promo" ? "secondary" : "ghost"}
+              className="w-full justify-start flex gap-2 my-1"
+            >
+              <Link
+                href="/add-promo"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <CirclePlus className="h-4 w-4" />
+                Add Promo
               </Link>
             </Button>
           </nav>

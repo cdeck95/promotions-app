@@ -11,6 +11,7 @@ export interface PromotionAttributes {
   url: string;
   image: string;
   postedDateTime: Date;
+  expiryDate: Date;
   leagueName: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -33,6 +34,7 @@ class Promotion
   public url!: string;
   public image!: string;
   public postedDateTime!: Date;
+  public expiryDate!: Date;
   public leagueName!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -74,6 +76,10 @@ Promotion.init(
     postedDateTime: {
       type: DataTypes.DATE,
       allowNull: false,
+    },
+    expiryDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     leagueName: {
       type: DataTypes.STRING,

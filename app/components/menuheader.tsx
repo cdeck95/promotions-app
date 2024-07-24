@@ -28,6 +28,7 @@ import {
   CalendarSearch,
   CalendarPlus,
   LayoutDashboard,
+  CirclePlus,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -195,6 +196,21 @@ function MenuHeader() {
                 >
                   <NotebookText className="h-4 w-4" />
                   Promos
+                </Link>
+              </Button>
+            </DialogTrigger>
+            <DialogTrigger asChild>
+              <Button
+                asChild
+                variant={pathname === "/add-promo" ? "secondary" : "ghost"}
+                className="w-full justify-start flex gap-2 my-1"
+              >
+                <Link
+                  href="/add-promo"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                >
+                  <CirclePlus className="h-4 w-4" />
+                  Add Promo
                 </Link>
               </Button>
             </DialogTrigger>
