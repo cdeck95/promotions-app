@@ -15,6 +15,9 @@ export const usePromotions = () => {
       const timestamp = new Date().getTime(); // Generate a unique timestamp
       const response = await fetch(`/api/promotions?cacheBust=${timestamp}`, {
         method: "GET",
+        next: {
+          revalidate: 10, // Revalidate every 10 seconds
+        },
         headers: {
           "Cache-Control": "no-store",
         },
