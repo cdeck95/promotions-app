@@ -31,6 +31,8 @@ import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import { RotateCounterClockwiseIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { promotions, isLoading, fetchPromotions } = usePromotions();
@@ -49,6 +51,8 @@ export default function Home() {
   const date72HoursAgo = moment().subtract(72, "hours").toDate();
 
   //console.log("Date 72 hours ago:", date72HoursAgo);
+
+  const router = useRouter();
 
   const columns: ColumnDef<Promotion>[] = [
     // {
@@ -382,7 +386,7 @@ export default function Home() {
               variant: "default",
               duration: 3000,
             });
-            fetchPromotions();
+            router.refresh();
           } catch (error) {
             console.error("Failed to update league", error);
             toast({
@@ -405,7 +409,7 @@ export default function Home() {
               variant: "default",
               duration: 3000,
             });
-            fetchPromotions();
+            router.refresh();
           } catch (error) {
             console.error("Failed to update state", error);
             toast({
@@ -429,7 +433,7 @@ export default function Home() {
               variant: "default",
               duration: 3000,
             });
-            fetchPromotions();
+            router.refresh();
           } catch (error) {
             console.error("Failed to update featured status", error);
             toast({
