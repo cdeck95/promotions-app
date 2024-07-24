@@ -12,7 +12,8 @@ export const usePromotions = () => {
     try {
       console.log("Fetching promotions...");
       setLoading(true);
-      const response = await fetch("/api/promotions", {
+      const timestamp = new Date().getTime(); // Generate a unique timestamp
+      const response = await fetch(`/api/promotions?cacheBust=${timestamp}`, {
         method: "GET",
         headers: {
           "Cache-Control": "no-store",
