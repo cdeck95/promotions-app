@@ -57,19 +57,3 @@ export async function GET(request: Request) {
     );
   }
 }
-
-export async function POST(req: NextApiRequest) {
-  try {
-    const promotion = await Promotion.create(req.body);
-
-    console.log("Created promotion:", promotion);
-
-    return NextResponse.json(promotion, { status: 201 });
-  } catch (error) {
-    console.error("Error creating promotion:", error);
-    return NextResponse.json(
-      { message: "Error creating promotion", error },
-      { status: 500 }
-    );
-  }
-}
