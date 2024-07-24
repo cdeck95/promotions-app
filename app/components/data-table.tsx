@@ -27,13 +27,19 @@ import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import React from "react";
 import Promotion from "@/lib/models/Promotion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DataTableProps {
   columns: ColumnDef<Promotion>[];
   data: Promotion[];
+  loading: boolean;
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
+export const DataTable: React.FC<DataTableProps> = ({
+  columns,
+  data,
+  loading,
+}) => {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -47,6 +53,8 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
       desc: true,
     },
   ];
+
+  const SKELETON_ROWS = 10;
 
   const [sorting, setSorting] = React.useState<SortingState>(initialSorting);
 
@@ -75,7 +83,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
   const [isMobile, setIsMobile] = React.useState(false);
   const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
   const maxTableWidth = 1500 > screenWidth ? screenWidth : 1500;
-  console.log("maxTableWidth", maxTableWidth);
+  //console.log("maxTableWidth", maxTableWidth);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -91,7 +99,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
     };
   }, []);
 
-  console.log("Data", data);
+  //console.log("Data", data);
 
   return (
     <div
@@ -123,7 +131,20 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              Array.from({ length: SKELETON_ROWS }).map((_, rowIndex) => (
+                <TableRow key={`skeleton-row-${rowIndex}`}>
+                  {columns.map((_, colIndex) => (
+                    <TableCell
+                      key={`skeleton-cell-${rowIndex}-${colIndex}`}
+                      className="h-10 w-full p-4"
+                    >
+                      <Skeleton className="h-10 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 // add green bg for featured promos
                 <TableRow

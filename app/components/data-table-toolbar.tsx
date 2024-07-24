@@ -27,11 +27,11 @@ export function DataTableToolbar<TData>({
     const values = table
       .getCoreRowModel()
       .flatRows.map((row) => row.getValue("platform")) as string[];
-    console.log("values", values);
+    //console.log("values", values);
     return Array.from(new Set(values));
   }, [table]);
 
-  console.log("uniquePlatforms", uniquePlatforms);
+  //console.log("uniquePlatforms", uniquePlatforms);
 
   // Convert the Set to an array and map it to the format needed for the options
   const platformOptions = Array.from(uniquePlatforms).map((platform) => ({
@@ -39,7 +39,7 @@ export function DataTableToolbar<TData>({
     label: platform,
   }));
 
-  console.log("leagueOptions", platformOptions);
+  //console.log("leagueOptions", platformOptions);
 
   // Assuming `tableData` is the data fed into the table
   const uniqueLeagues = useMemo(() => {
@@ -49,7 +49,7 @@ export function DataTableToolbar<TData>({
     return Array.from(new Set(values));
   }, [table]);
 
-  console.log("uniqueLeagues", uniqueLeagues);
+  //console.log("uniqueLeagues", uniqueLeagues);
 
   // Convert the Set to an array and map it to the format needed for the options
   const leagueOptions = Array.from(uniqueLeagues).map((league) => ({
@@ -57,7 +57,7 @@ export function DataTableToolbar<TData>({
     label: league,
   }));
 
-  console.log("leagueOptions", leagueOptions);
+  //console.log("leagueOptions", leagueOptions);
 
   const uniqueStates = useMemo(() => {
     const values = table
@@ -66,7 +66,7 @@ export function DataTableToolbar<TData>({
     return Array.from(new Set(values));
   }, [table]);
 
-  console.log("uniqueStates", uniqueStates);
+  //console.log("uniqueStates", uniqueStates);
 
   // Convert the Set to an array and map it to the format needed for the options
   const stateOptions = Array.from(uniqueStates).map((state) => ({
@@ -74,7 +74,7 @@ export function DataTableToolbar<TData>({
     label: state,
   }));
 
-  console.log("stateOptions", stateOptions);
+  //console.log("stateOptions", stateOptions);
 
   const [isMobile, setIsMobile] = React.useState(false);
   const handleResize = () => {

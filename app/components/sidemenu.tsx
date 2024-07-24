@@ -59,7 +59,7 @@ function SideMenu() {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      console.log("width: ", width);
+      //console.log("width: ", width);
       setIsMobile(width <= 1080);
     };
 
@@ -74,11 +74,7 @@ function SideMenu() {
   const [showErrorMessage, setShowErrorMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState("Testing");
 
-  const {
-   
-    getOrganization,
-    getUserOrganizations,
-  } = useKindeBrowserClient();
+  const { getOrganization, getUserOrganizations } = useKindeBrowserClient();
 
   const { toast } = useToast();
   const orgCode = getOrganization() as KindeOrganization;
@@ -154,7 +150,6 @@ function SideMenu() {
                 Promos
               </Link>
             </Button>
-
           </nav>
         </div>
       </div>

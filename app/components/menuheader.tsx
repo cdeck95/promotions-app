@@ -101,7 +101,7 @@ function MenuHeader() {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      console.log("width: ", width);
+      //console.log("width: ", width);
       setIsMobile(width <= 1080);
     };
 
@@ -125,7 +125,6 @@ function MenuHeader() {
   // // console.log("orgCode at root: ", orgCode);
   const orgCodes = getUserOrganizations() as unknown as string[];
   // // console.log("orgCodes at root: ", orgCodes);
-
 
   const [systemTheme, setSystemTheme] = useState("light"); // Default to light theme
 
@@ -158,7 +157,6 @@ function MenuHeader() {
   //   // Update the logo state
   //   setLogo(currentLogo);
   // }, [theme, systemTheme]);
-
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
