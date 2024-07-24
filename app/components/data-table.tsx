@@ -81,7 +81,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   });
 
   const [isMobile, setIsMobile] = React.useState(false);
-  const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
+  const [screenWidth, setScreenWidth] = React.useState(0);
   const maxTableWidth = 1500 > screenWidth ? screenWidth : 1500;
   //console.log("maxTableWidth", maxTableWidth);
 
