@@ -4,6 +4,9 @@ import { Op } from "sequelize";
 import moment from "moment";
 import { NextApiRequest } from "next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   try {
     // 1. Calculate the date 72 hours ago from now using moment

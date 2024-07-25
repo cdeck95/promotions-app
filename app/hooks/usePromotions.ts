@@ -15,7 +15,7 @@ export const usePromotions = () => {
       console.log("Fetching promotions...");
       setLoading(true);
       const timestamp = new Date().getTime(); // Generate a unique timestamp
-      const response = await fetch(`/api/promotions`, {
+      const response = await fetch(`/api/promotions?timestamp=${timestamp}`, {
         method: "GET",
         cache: "no-store",
         next: {

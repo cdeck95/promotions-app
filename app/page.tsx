@@ -387,6 +387,7 @@ export default function Home() {
               duration: 3000,
             });
             router.refresh();
+            fetchPromotions();
           } catch (error) {
             console.error("Failed to update league", error);
             toast({
@@ -410,6 +411,7 @@ export default function Home() {
               duration: 3000,
             });
             router.refresh();
+            fetchPromotions();
           } catch (error) {
             console.error("Failed to update state", error);
             toast({
@@ -434,6 +436,7 @@ export default function Home() {
               duration: 3000,
             });
             router.refresh();
+            fetchPromotions();
           } catch (error) {
             console.error("Failed to update featured status", error);
             toast({
