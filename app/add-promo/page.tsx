@@ -613,13 +613,13 @@ function AddPromo() {
               <div className="grid gap-4">
                 <div className="flex ">
                   {promotion.image && (
-                    <div className="mr-4 h-full w-full">
+                    <div className="mr-4 h-full ">
                       <Image
                         src={promotion.image}
                         alt="Promotion Image"
                         width={144}
                         height={144}
-                        className="object-cover"
+                        className="object-cover "
                       />
                     </div>
                   )}
