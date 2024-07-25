@@ -13,8 +13,8 @@ export interface PromotionAttributes {
   postedDateTime: Date;
   expiryDate: Date;
   leagueName: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   featured: boolean;
   applicableState: string | null;
 }

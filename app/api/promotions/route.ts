@@ -3,6 +3,7 @@ import Promotion from "../../../lib/models/Promotion";
 import { Op } from "sequelize";
 import moment from "moment";
 import { NextApiRequest } from "next";
+import { put } from "@vercel/blob";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -57,6 +58,48 @@ export async function GET(request: Request) {
     console.error("Error fetching promotions:", error);
     return NextResponse.json(
       { message: "Error fetching promotions", error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    console.log("Creating promotion with data:", body);
+
+    // Validate the promotion data
+    if (!body.title || !body.platform) {
+      return NextResponse.json(
+        { message: "Title and platform are required" },
+        { status: 400 }
+      );
+    }
+
+    console.log("Title and platform are provided");
+
+    // Create a new promotion
+    const newPromotion = await Promotion.create({
+      title: body.title,
+      description: body.description || "",
+      platform: body.platform,
+      postedDateTime: body.postedDateTime || new Date(),
+      leagueName: body.leagueName || null,
+      code: body.code || null,
+      url: body.url || null,
+      expiryDate: body.expiryDate || null,
+      image: body.image || null,
+      featured: body.featured || false,
+      applicableState: body.applicableState || null,
+    });
+
+    console.log("Promotion created:", newPromotion);
+
+    return NextResponse.json(newPromotion, { status: 201 });
+  } catch (error) {
+    console.error("Error creating promotion:", error);
+    return NextResponse.json(
+      { message: "Error creating promotion", error },
       { status: 500 }
     );
   }

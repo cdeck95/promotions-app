@@ -25,6 +25,7 @@ export const usePromotions = () => {
 
       const data: Promotion[] = await response.json();
       console.log("Promotions fetched:", data);
+
       setPromotions(data);
     } catch (err: any) {
       setError(err);

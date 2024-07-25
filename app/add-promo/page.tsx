@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useRef } from "react";
+import React, {
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useRef,
+  ChangeEventHandler,
+} from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@radix-ui/react-label";
@@ -10,6 +16,7 @@ import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import Promotion from "@/lib/models/Promotion";
+import { upload } from "@vercel/blob/client";
 import {
   Select,
   SelectContent,
@@ -23,7 +30,7 @@ import FanduelLogo from "@/public/assets/fanduel.png";
 import DraftkingsLogo from "@/public/assets/draftkings.png";
 import ESPNBetLogo from "@/public/assets/ESPN Bet.svg";
 import { DatePickerWithPresets } from "../components/date-picker-with-presets";
-import { addDays } from "date-fns";
+import { addDays, set } from "date-fns";
 
 function AddPromo() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -47,7 +54,7 @@ function AddPromo() {
       label: "NHL",
     },
     {
-      value: "American Major League Soccer",
+      value: "MLS",
       label: "MLS",
     },
     {
@@ -120,7 +127,10 @@ function AddPromo() {
     },
   ];
 
-  const [error, setError] = useState<string | null>(null);
+  const [dateError, setDateError] = useState<string | null>(null);
+  const [platformError, setPlatformError] = useState<string | null>(null);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [urlError, setUrlError] = useState<string | null>(null);
 
   const [promotion, setPromotion] = useState({
     id: -1,
@@ -138,18 +148,141 @@ function AddPromo() {
   });
   const { toast } = useToast();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Success!",
-      description: "Your promotion has been added successfully.",
-      variant: "default",
-      duration: 3000,
-    });
+    console.log("Promotion data:", promotion);
+    console.log("Form data:", e);
+
+    if (!promotion.platform) {
+      setPlatformError("Platform is required");
+      setDrawerOpen(false);
+      toast({
+        title: "Error!",
+        description: "Platform is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+    console.log("Platform is provided");
+
+    if (!promotion.title) {
+      setTitleError("Title is required");
+      setDrawerOpen(false);
+      toast({
+        title: "Error!",
+        description: "Title is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+    console.log("Title is provided");
+
+    if (!promotion.url) {
+      setUrlError("URL is required");
+      setDrawerOpen(false);
+      toast({
+        title: "Error!",
+        description: "URL is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
+    try {
+      // Send POST request to the backend
+      const response = await fetch("/api/promotions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: promotion.title,
+          description: promotion.description,
+          platform: promotion.platform,
+          image: promotion.image,
+          postedDateTime: promotion.postedDateTime,
+          leagueName: promotion.leagueName,
+          code: promotion.code,
+          url: promotion.url,
+          expiryDate: promotion.expiryDate,
+          featured: promotion.featured,
+          applicableState: promotion.applicableState,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Response data:", data);
+
+      if (data.error) {
+        console.log("Error creating promotion:", data.error);
+        toast({
+          title: "Error!",
+          description: data.message,
+          variant: "destructive",
+          duration: 3000,
+        });
+      } else {
+        // Handle successful response
+        console.log("Promotion created successfully:", data);
+        toast({
+          title: "Success!",
+          description: "Promotion created successfully.",
+          variant: "default",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating promotion:", error);
+      toast({
+        title: "Error!",
+        description: "An error occurred while creating the promotion.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
     resetForm();
   };
 
   const OpenDrawer = () => {
+    if (!promotion.platform) {
+      setPlatformError("Platform is required");
+      toast({
+        title: "Error!",
+        description: "Platform is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+    setPlatformError(null);
+    if (!promotion.title) {
+      setTitleError("Title is required");
+      toast({
+        title: "Error!",
+        description: "Title is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+    setTitleError(null);
+
+    if (!promotion.url) {
+      setUrlError("URL is required");
+      setDrawerOpen(false);
+      toast({
+        title: "Error!",
+        description: "URL is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
+    setUrlError(null);
     setDrawerOpen(true);
   };
 
@@ -179,9 +312,9 @@ function AddPromo() {
     expiryDate: Date | undefined
   ) => {
     if (startDate && expiryDate && startDate > expiryDate) {
-      setError("Start date cannot be on or after the expiry date.");
+      setDateError("Start date cannot be on or after the expiry date.");
     } else {
-      setError(null);
+      setDateError(null);
     }
   };
 
@@ -194,6 +327,48 @@ function AddPromo() {
     setPromotion({ ...promotion, expiryDate: date });
     validateDates(promotion.postedDateTime, date);
   };
+
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!fileInputRef.current?.files) {
+      toast({
+        title: "Error!",
+        description: "No file selected.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      throw new Error("No file selected");
+    }
+    const file = fileInputRef.current.files[0];
+    const newBlob = await upload(file.name, file, {
+      access: "public",
+      handleUploadUrl: "/api/promoImage/upload",
+    });
+    setPromotion({ ...promotion, image: newBlob.url });
+  };
+
+  const platforms = [
+    {
+      logo: FanduelLogo,
+      alt: "Fanduel Sportsbook Logo",
+      displayName: "Fanduel",
+      description: "Fanduel Sportsbook & Casino",
+      value: "Fanduel",
+    },
+    {
+      logo: DraftkingsLogo,
+      alt: "Draftkings Sportsbook Logo",
+      displayName: "Draftkings",
+      description: "Draftkings Sportsbook",
+      value: "Draftkings",
+    },
+    {
+      logo: ESPNBetLogo,
+      alt: "ESPN Bet Logo",
+      displayName: "ESPN Bet",
+      description: "ESPN Bet - The official sportsbook of ESPN",
+      value: "ESPN Bet",
+    },
+  ];
 
   return (
     <div className="grid grid-col-1 p-2 lg:p-6 gap-4 h-full w-full items-start">
@@ -221,68 +396,35 @@ function AddPromo() {
                     <SelectValue placeholder="Select Platform" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Fanduel">
-                      <div className="flex items-center justify-center gap-3 text-muted-foreground w-full">
-                        <Image
-                          src={FanduelLogo}
-                          width={20}
-                          height={20}
-                          alt="Fanduel Sportsbook Logo"
-                        />
-                        <div className="grid gap-0.5">
-                          <p>
-                            <span className="font-medium text-foreground">
-                              Fanduel
-                            </span>
-                          </p>
-                          <p className="text-xs" data-description>
-                            Fanduel Sportsbook & Casino
-                          </p>
+                    {platforms.map((platform) => (
+                      <SelectItem key={platform.value} value={platform.value}>
+                        <div className="flex items-center justify-center gap-3 text-muted-foreground w-full">
+                          <Image
+                            src={platform.logo}
+                            width={20}
+                            height={20}
+                            alt={platform.alt}
+                          />
+                          <div className="grid gap-0.5">
+                            <p>
+                              <span className="font-medium text-foreground">
+                                {platform.displayName}
+                              </span>
+                            </p>
+                            <p className="text-xs" data-description>
+                              {platform.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="Draftkings">
-                      <div className="flex items-center justify-center gap-3 text-muted-foreground w-full">
-                        <Image
-                          src={DraftkingsLogo}
-                          width={20}
-                          height={20}
-                          alt="Draftkings Sportsbook Logo"
-                        />
-                        <div className="grid gap-0.5">
-                          <p>
-                            <span className="font-medium text-foreground">
-                              Draftkings
-                            </span>
-                          </p>
-                          <p className="text-xs" data-description>
-                            Draftkings Sportsbook
-                          </p>
-                        </div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="ESPN Bet">
-                      <div className="flex items-center justify-center gap-3 text-muted-foreground w-full">
-                        <Image
-                          src={ESPNBetLogo}
-                          width={20}
-                          height={20}
-                          alt="ESPN Bet Logo"
-                        />
-                        <div className="grid gap-0.5">
-                          <p>
-                            <span className="font-medium text-foreground">
-                              ESPN Bet
-                            </span>
-                          </p>
-                          <p className="text-xs" data-description>
-                            ESPN Bet - The official sportsbook of ESPN
-                          </p>
-                        </div>
-                      </div>
-                    </SelectItem>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
+                {platformError && (
+                  <Label className="text-red-800 text-sm">
+                    {platformError}
+                  </Label>
+                )}
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="title">Title</Label>
@@ -295,6 +437,9 @@ function AddPromo() {
                   }
                   placeholder="i.e., $1000 Risk-Free Bet"
                 />
+                {titleError && (
+                  <Label className="text-red-800 text-sm">{titleError}</Label>
+                )}
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="title">Description</Label>
@@ -339,8 +484,8 @@ function AddPromo() {
                   value={promotion.expiryDate}
                   onChange={handleExpiryDateChange}
                 />
-                {error && (
-                  <Label className="text-red-800 text-sm">{error}</Label>
+                {dateError && (
+                  <Label className="text-red-800 text-sm">{dateError}</Label>
                 )}
               </div>
               <div className="grid gap-3">
@@ -354,6 +499,9 @@ function AddPromo() {
                   }
                   placeholder="The URL to the promotion"
                 />
+                {urlError && (
+                  <Label className="text-red-800 text-sm">{urlError}</Label>
+                )}
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="bin">League Name</Label>
@@ -415,19 +563,20 @@ function AddPromo() {
               type="file"
               accept="image/*"
               ref={fileInputRef}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = () => {
-                    setPromotion({
-                      ...promotion,
-                      image: reader.result as string,
-                    });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
+              onChange={handleImageChange}
+              // onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              //   const file = e.target.files?.[0];
+              //   if (file) {
+              //     const reader = new FileReader();
+              //     reader.onload = () => {
+              //       setPromotion({
+              //         ...promotion,
+              //         image: reader.result as string,
+              //       });
+              //     };
+              //     reader.readAsDataURL(file);
+              //   }
+              // }}
               className="border-0 p-2 pt-2 cursor-pointer focus-visible:ring-0"
             />
             <div className="flex items-center gap-3 mt-2">
@@ -458,13 +607,13 @@ function AddPromo() {
       {isDrawerOpen && (
         <Drawer open={isDrawerOpen} onClose={() => setDrawerOpen(false)}>
           <DrawerOverlay />
-          <DrawerContent>
-            <div className="p-4">
+          <DrawerContent className="p-4  lg:mt-0">
+            <div className="p-4 pt-[60px] lg:mt-0 relative">
               <h2 className="text-xl font-bold mb-4">Confirm Promotion Info</h2>
               <div className="grid gap-4">
-                <div className="flex">
+                <div className="flex ">
                   {promotion.image && (
-                    <div className="mr-4">
+                    <div className="mr-4 h-full w-full">
                       <Image
                         src={promotion.image}
                         alt="Promotion Image"
@@ -474,51 +623,77 @@ function AddPromo() {
                       />
                     </div>
                   )}
-                  <div className="flex flex-col">
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">Platform:</span>
-                      <span>{promotion.platform}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">Title:</span>
-                      <span>{promotion.title}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">Description:</span>
-                      <span>{promotion.description}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">Code:</span>
-                      <span>{promotion.code}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">Start Date:</span>
-                      <span>{promotion.postedDateTime.toDateString()}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">End Date:</span>
-                      <span>{promotion.expiryDate.toDateString()}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
-                      <span className="font-bold">URL:</span>
-                      <span>{promotion.url}</span>
-                    </div>
-                    <Badge variant="outline" className="mt-2">
+                  <div className="absolute top-2 right-2 min-w-[100px] pt-2">
+                    <Badge variant="outline" className="mx-2">
                       {promotion.leagueName}
                     </Badge>
                     {promotion.applicableState && (
-                      <Badge variant="outline" className="mt-2">
+                      <Badge variant="outline" className="mx-2">
                         {promotion.applicableState}
                       </Badge>
                     )}
+                    {promotion.featured && (
+                      <Badge variant="outline" className="mx-2 bg-green-500">
+                        Featured
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col">
                     <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">Platform:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {promotion.platform}
+                      </span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">Title:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {promotion.title}
+                      </span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">Description:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {promotion.description}
+                      </span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">Code:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {promotion.code}
+                      </span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">Start Date:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {promotion.postedDateTime.toDateString()}
+                      </span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">End Date:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {promotion.expiryDate.toDateString()}
+                      </span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <span className="font-bold text-sm">URL:</span>
+                      <a
+                        className="text-sm text-muted-foreground text-blue-500"
+                        href={promotion.url}
+                      >
+                        {promotion.url}
+                      </a>
+                    </div>
+
+                    {/* <div className="flex flex-row gap-2">
                       <span className="font-bold">League Name:</span>
                       <span>{promotion.leagueName}</span>
-                    </div>
-                    <div className="flex flex-row gap-2">
+                    </div> */}
+                    {/* <div className="flex flex-row gap-2">
                       <span className="font-bold">Featured:</span>
                       <span>{promotion.featured ? "Yes" : "No"}</span>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
