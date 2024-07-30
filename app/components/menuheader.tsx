@@ -74,6 +74,7 @@ import {
 } from "@/components/ui/drawer";
 import { Label } from "@radix-ui/react-label";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import { DashboardIcon } from "@radix-ui/react-icons";
 
 interface KindeUser {
   family_name: string;
@@ -88,14 +89,18 @@ function MenuHeader() {
     isLoading,
     isAuthenticated,
     user,
+    accessToken,
     getAccessToken,
     getToken,
     getOrganization,
     getUserOrganizations,
   } = useKindeBrowserClient();
 
-  // // console.log("isAuthenticated: ", isAuthenticated);
-  // // console.log("user: ", user);
+  // console.log("isAuthenticated: ", isAuthenticated);
+  // console.log("user: ", user);
+  const aTok = getAccessToken();
+
+  console.log(accessToken, aTok);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -181,9 +186,6 @@ function MenuHeader() {
             </div>
           </div>
           <nav className="grid gap-2 text-lg font-medium">
-            {/* <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
-              Analyze
-            </h2> */}
             <DialogTrigger asChild>
               <Button
                 asChild
@@ -194,6 +196,24 @@ function MenuHeader() {
                   href="/"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
+                  <DashboardIcon className="h-4 w-4" />
+                  Dashboard
+                </Link>
+              </Button>
+            </DialogTrigger>
+            <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
+              Admin Tools
+            </h2>
+            <DialogTrigger asChild>
+              <Button
+                asChild
+                variant={pathname === "/admin/promos" ? "secondary" : "ghost"}
+                className="w-full justify-start flex gap-2 my-1"
+              >
+                <Link
+                  href="/admin/promos"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                >
                   <NotebookText className="h-4 w-4" />
                   Promos
                 </Link>
@@ -202,11 +222,13 @@ function MenuHeader() {
             <DialogTrigger asChild>
               <Button
                 asChild
-                variant={pathname === "/add-promo" ? "secondary" : "ghost"}
+                variant={
+                  pathname === "/admin/add-promo" ? "secondary" : "ghost"
+                }
                 className="w-full justify-start flex gap-2 my-1"
               >
                 <Link
-                  href="/add-promo"
+                  href="/admin/add-promo"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
                   <CirclePlus className="h-4 w-4" />
@@ -265,10 +287,10 @@ function MenuHeader() {
 
             {isAuthenticated ? (
               <DropdownMenuItem>
-                <div className="flex items-center gap-3 rounded-lg px-1 py-2 text-muted-foreground transition-all hover:text-primary">
+                <LogoutLink className="flex flex-row gap-3 items-center text-red-700 rounded-lg px-1 py-2 ">
                   <LogOut className="h-4 w-4" />
-                  <LogoutLink>Log out</LogoutLink>
-                </div>
+                  Log out
+                </LogoutLink>
               </DropdownMenuItem>
             ) : (
               <></>
@@ -277,7 +299,7 @@ function MenuHeader() {
         </DropdownMenu>
       ) : (
         <div className="flex items-center gap-4">
-          <LoginLink orgCode="org_2962611997c86">
+          <LoginLink>
             <Button
               variant="link"
               size="icon"
@@ -286,7 +308,7 @@ function MenuHeader() {
               Login
             </Button>
           </LoginLink>
-          <RegisterLink orgCode="org_2962611997c86">
+          <RegisterLink>
             <Button
               variant="default"
               size="icon"

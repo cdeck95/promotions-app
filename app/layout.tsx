@@ -6,6 +6,7 @@ import MenuHeader from "./components/menuheader";
 import SideMenu from "./components/sidemenu";
 import { Toaster } from "@/components/ui/toaster";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,6 +55,11 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
   },
 };
+
+const { getAccessToken } = getKindeServerSession();
+const accessToken = await getAccessToken();
+
+console.log(accessToken);
 
 export default function RootLayout({
   children,

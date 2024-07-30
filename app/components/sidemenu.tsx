@@ -49,6 +49,7 @@ import { useTheme } from "next-themes";
 import Rush2WagerLogo from "@/public/main_logo_fullsize.png";
 import { KindeOrganization } from "../interfaces/KindeOrganization";
 import { KindeOrganizations } from "../interfaces/KindeOrganizations";
+import { DashboardIcon } from "@radix-ui/react-icons";
 
 function SideMenu() {
   const pathname = usePathname();
@@ -134,10 +135,6 @@ function SideMenu() {
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            {/* <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
-              Analyze
-            </h2> */}
-
             <Button
               asChild
               variant={pathname === "/" ? "secondary" : "ghost"}
@@ -147,17 +144,34 @@ function SideMenu() {
                 href="/"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
+                <DashboardIcon className="h-4 w-4" />
+                Dashboard
+              </Link>
+            </Button>
+            <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
+              Admin Tools
+            </h2>
+
+            <Button
+              asChild
+              variant={pathname === "/admin/promos" ? "secondary" : "ghost"}
+              className="w-full justify-start flex gap-2 my-1"
+            >
+              <Link
+                href="/admin/promos"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
                 <NotebookText className="h-4 w-4" />
                 Promos
               </Link>
             </Button>
             <Button
               asChild
-              variant={pathname === "/add-promo" ? "secondary" : "ghost"}
+              variant={pathname === "/admin/add-promo" ? "secondary" : "ghost"}
               className="w-full justify-start flex gap-2 my-1"
             >
               <Link
-                href="/add-promo"
+                href="/admin/add-promo"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
                 <CirclePlus className="h-4 w-4" />

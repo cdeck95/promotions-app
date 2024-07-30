@@ -1,16 +1,13 @@
 "use client";
 
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { DataTable } from "./components/data-table";
 import { useEffect, useState } from "react";
 import Promotion from "@/lib/models/Promotion";
 import Rush2WagerLogo from "@/public/main_logo_fullsize.png";
 import Image from "next/image";
 import moment from "moment";
 import { Label } from "@/components/ui/label";
-import { usePromotions } from "./hooks/usePromotions";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "./components/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import {
@@ -26,13 +23,15 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DataTableRowActions } from "./components/data-table-row-actions";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { RotateCounterClockwiseIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
+import { usePromotions } from "@/app/hooks/usePromotions";
+import { DataTableColumnHeader } from "@/app/components/data-table-column-header";
+import { DataTable } from "@/app/components/data-table";
 
 export default function Home() {
   const { promotions, isLoading, fetchPromotions } = usePromotions();
@@ -524,7 +523,9 @@ export default function Home() {
 
   return (
     <div className="grid gridcol-1 min-h-screen w-full items-start p-4 lg:p-8 gap-4">
-      Dashboard coming soon
+      <div className="grid grid-cols-1 gap-8 w-full ml-auto mr-auto">
+        <DataTable columns={columns} data={promotions} loading={isLoading} />
+      </div>
     </div>
   );
 }

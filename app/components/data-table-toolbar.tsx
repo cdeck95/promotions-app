@@ -32,7 +32,7 @@ export function DataTableToolbar<TData>({
     return Array.from(new Set(values)).filter((value) => value !== null);
   }, [table]);
 
-  console.log("uniquePlatforms", uniquePlatforms);
+  //console.log("uniquePlatforms", uniquePlatforms);
 
   // Convert the Set to an array and map it to the format needed for the options
   const platformOptions = Array.from(uniquePlatforms).map((platform) => ({
@@ -40,7 +40,7 @@ export function DataTableToolbar<TData>({
     label: platform,
   }));
 
-  console.log("platformOptions", platformOptions);
+  //console.log("platformOptions", platformOptions);
 
   // Assuming `tableData` is the data fed into the table
   const uniqueLeagues = useMemo(() => {
@@ -50,7 +50,7 @@ export function DataTableToolbar<TData>({
     return Array.from(new Set(values)).filter((value) => value !== null);
   }, [table]);
 
-  console.log("uniqueLeagues", uniqueLeagues);
+  //console.log("uniqueLeagues", uniqueLeagues);
 
   // Convert the Set to an array and map it to the format needed for the options
   const leagueOptions = Array.from(uniqueLeagues).map((league) => ({
@@ -58,7 +58,7 @@ export function DataTableToolbar<TData>({
     label: league,
   }));
 
-  console.log("leagueOptions", leagueOptions);
+  //console.log("leagueOptions", leagueOptions);
 
   const uniqueStates = useMemo(() => {
     const values = table
@@ -67,7 +67,7 @@ export function DataTableToolbar<TData>({
     return Array.from(new Set(values)).filter((value) => value !== null);
   }, [table]);
 
-  console.log("uniqueStates", uniqueStates);
+  //console.log("uniqueStates", uniqueStates);
 
   // Convert the Set to an array and map it to the format needed for the options
   const stateOptions = uniqueStates.map((state) => ({
@@ -75,7 +75,7 @@ export function DataTableToolbar<TData>({
     label: state,
   }));
 
-  console.log("stateOptions", stateOptions);
+  //console.log("stateOptions", stateOptions);
 
   const [isMobile, setIsMobile] = React.useState(false);
   const handleResize = () => {

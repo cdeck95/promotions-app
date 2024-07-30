@@ -29,8 +29,16 @@ import Image from "next/image";
 import FanduelLogo from "@/public/assets/fanduel.png";
 import DraftkingsLogo from "@/public/assets/draftkings.png";
 import ESPNBetLogo from "@/public/assets/ESPN Bet.svg";
-import { DatePickerWithPresets } from "../components/date-picker-with-presets";
 import { addDays, set } from "date-fns";
+import { DatePickerWithPresets } from "@/app/components/date-picker-with-presets";
+import BetMGMLogo from "@/public/assets/betmgm.png";
+import BetriversLogo from "@/public/assets/betrivers.png";
+import CaesarsLogo from "@/public/assets/caesars.png";
+import HardrockLogo from "@/public/assets/hardrock.webp";
+import BetUSLogo from "@/public/assets/betus.jpg";
+import BetOnlineLogo from "@/public/assets/betonline.jpg";
+import Bet365Logo from "@/public/assets/bet365.png";
+import FanaticsLogo from "@/public/assets/fanatics.png";
 
 function AddPromo() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -368,6 +376,62 @@ function AddPromo() {
       description: "ESPN Bet - The official sportsbook of ESPN",
       value: "ESPN Bet",
     },
+    {
+      logo: BetMGMLogo,
+      alt: "Bet MGM Logo",
+      displayName: "Bet MGM",
+      description: "Bet MGM - The King of Sportsbooks",
+      value: "Bet MGM",
+    },
+    {
+      logo: BetriversLogo,
+      alt: "Betrivers Sportsbook Logo",
+      displayName: "Betrivers",
+      description: "Betrivers Sportsbook",
+      value: "Betrivers",
+    },
+    {
+      logo: CaesarsLogo,
+      alt: "Caesars Sportsbook Logo",
+      displayName: "Caesars",
+      description: "Caesars Sportsbook",
+      value: "Caesars",
+    },
+    {
+      logo: HardrockLogo,
+      alt: "Hardrock Sportsbook Logo",
+      displayName: "Hardrock",
+      description: "Hardrock Sportsbook",
+      value: "Hardrock",
+    },
+    {
+      logo: BetUSLogo,
+      alt: "Bet US Logo",
+      displayName: "Bet US",
+      description: "Bet US - America's Favorite Sportsbook",
+      value: "Bet US",
+    },
+    {
+      logo: BetOnlineLogo,
+      alt: "BetOnline Logo",
+      displayName: "BetOnline",
+      description: "BetOnline Sportsbook",
+      value: "BetOnline",
+    },
+    {
+      logo: Bet365Logo,
+      alt: "Bet365 Logo",
+      displayName: "Bet365",
+      description: "Bet365 Sportsbook",
+      value: "Bet365",
+    },
+    {
+      logo: FanaticsLogo,
+      alt: "Fanatics Logo",
+      displayName: "Fanatics",
+      description: "Fanatics Sportsbook",
+      value: "Fanatics",
+    },
   ];
 
   return (
@@ -401,9 +465,10 @@ function AddPromo() {
                         <div className="flex items-center justify-center gap-3 text-muted-foreground w-full">
                           <Image
                             src={platform.logo}
-                            width={20}
-                            height={20}
+                            width={30}
+                            height={30}
                             alt={platform.alt}
+                            className="rounded-sm"
                           />
                           <div className="grid gap-0.5">
                             <p>

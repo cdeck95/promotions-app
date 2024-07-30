@@ -76,13 +76,12 @@
   }
 
   a {
-    color: var(--primary-green);
     text-decoration: none;
     transition: color 0.3s ease;
 
-    &:hover {
+    /* &:hover {
       color: var(--dark-green);
-    }
+    } */
   }
 }
 
