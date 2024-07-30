@@ -10,6 +10,7 @@ import { columnHeadersArrayPromotions } from "./columns";
 import { useMemo } from "react";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import React from "react";
+import { stat } from "fs";
 
 interface DataTableToolbarProps<TData> {
   searchName: string;
@@ -28,10 +29,10 @@ export function DataTableToolbar<TData>({
       .getCoreRowModel()
       .flatRows.map((row) => row.getValue("platform")) as string[];
     //console.log("values", values);
-    return Array.from(new Set(values));
+    return Array.from(new Set(values)).filter((value) => value !== null);
   }, [table]);
 
-  //console.log("uniquePlatforms", uniquePlatforms);
+  console.log("uniquePlatforms", uniquePlatforms);
 
   // Convert the Set to an array and map it to the format needed for the options
   const platformOptions = Array.from(uniquePlatforms).map((platform) => ({
@@ -39,17 +40,17 @@ export function DataTableToolbar<TData>({
     label: platform,
   }));
 
-  //console.log("leagueOptions", platformOptions);
+  console.log("platformOptions", platformOptions);
 
   // Assuming `tableData` is the data fed into the table
   const uniqueLeagues = useMemo(() => {
     const values = table
       .getCoreRowModel()
       .flatRows.map((row) => row.getValue("leagueName")) as string[];
-    return Array.from(new Set(values));
+    return Array.from(new Set(values)).filter((value) => value !== null);
   }, [table]);
 
-  //console.log("uniqueLeagues", uniqueLeagues);
+  console.log("uniqueLeagues", uniqueLeagues);
 
   // Convert the Set to an array and map it to the format needed for the options
   const leagueOptions = Array.from(uniqueLeagues).map((league) => ({
@@ -57,24 +58,24 @@ export function DataTableToolbar<TData>({
     label: league,
   }));
 
-  //console.log("leagueOptions", leagueOptions);
+  console.log("leagueOptions", leagueOptions);
 
   const uniqueStates = useMemo(() => {
     const values = table
       .getCoreRowModel()
       .flatRows.map((row) => row.getValue("applicableState")) as string[];
-    return Array.from(new Set(values));
+    return Array.from(new Set(values)).filter((value) => value !== null);
   }, [table]);
 
-  //console.log("uniqueStates", uniqueStates);
+  console.log("uniqueStates", uniqueStates);
 
   // Convert the Set to an array and map it to the format needed for the options
-  const stateOptions = Array.from(uniqueStates).map((state) => ({
+  const stateOptions = uniqueStates.map((state) => ({
     value: state,
     label: state,
   }));
 
-  //console.log("stateOptions", stateOptions);
+  console.log("stateOptions", stateOptions);
 
   const [isMobile, setIsMobile] = React.useState(false);
   const handleResize = () => {
@@ -102,21 +103,21 @@ export function DataTableToolbar<TData>({
         />
         <div className="flex flex-col gap-1 !ml-0">
           <div className="flex flex-row gap-1 w-full !ml-0">
-            {table.getColumn("platform") && (
+            {table.getColumn("platform") && platformOptions.length > 0 && (
               <DataTableFacetedFilter
                 column={table.getColumn("platform")}
                 title="Platform"
                 options={platformOptions}
               />
             )}
-            {table.getColumn("leagueName") && (
+            {table.getColumn("leagueName") && leagueOptions.length > 0 && (
               <DataTableFacetedFilter
                 column={table.getColumn("leagueName")}
                 title="League"
                 options={leagueOptions}
               />
             )}
-            {table.getColumn("applicableState") && (
+            {table.getColumn("applicableState") && stateOptions.length > 0 && (
               <div className="hidden lg:flex">
                 <DataTableFacetedFilter
                   column={table.getColumn("applicableState")}

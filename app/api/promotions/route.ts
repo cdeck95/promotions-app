@@ -30,6 +30,9 @@ export async function GET(request: Request) {
       if (promotion.leagueName === "") {
         promotion.leagueName = null;
       }
+      if (promotion.applicableState === "") {
+        promotion.applicableState = null;
+      }
     });
 
     // 3. Retrieve the last entered promotion

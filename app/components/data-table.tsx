@@ -106,7 +106,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       className="grid grid-cols-1 gap-4 w-full h-full"
       style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}
     >
-      <DataTableToolbar searchName={"title"} table={table} />
+      {!loading && <DataTableToolbar searchName={"title"} table={table} />}
       <div
         className="rounded-md border w-full m-auto justify-center"
         style={{ maxWidth: isMobile ? "100%" : maxTableWidth + "px" }}

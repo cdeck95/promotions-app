@@ -71,17 +71,18 @@ export default function Home() {
     //     );
     //   },
     // },
-    {
-      accessorKey: "image",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Image" />
-      ),
-      cell: (info) => {
-        const id = info.getValue() as string;
-        const imageUrl = info.row.getValue("image") as string;
-        return <Image src={imageUrl} alt={id} width={400} height={400} />;
-      },
-    },
+    // {
+    //   accessorKey: "image",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="Image" />
+    //   ),
+    //   cell: (info) => {
+    //     const id = info.getValue() as string;
+    //     const imageUrl = info.row.getValue("image") as string;
+    //     return <Image src={imageUrl} alt={id} width={400} height={400} />;
+    //   },
+    // },
+
     {
       accessorKey: "platform",
       header: ({ column }) => (
@@ -104,25 +105,6 @@ export default function Home() {
       cell: (info) => (info.getValue() as string).toString(),
     },
     {
-      accessorKey: "description",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Description"
-          className="min-w-[250px]"
-        />
-      ),
-      cell: (info) => {
-        return (
-          <div className="flex flex-row min-w-fit items-center justify-start gap-2">
-            {/* <Label className="text-sm min-w-fit text-ellipsis"> */}
-            {info.getValue() as string}
-            {/* </Label> */}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "leagueName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="League" />
@@ -141,20 +123,40 @@ export default function Home() {
       },
     },
     {
-      accessorKey: "code",
+      accessorKey: "description",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Code" />
+        <DataTableColumnHeader
+          column={column}
+          title="Description"
+          className="min-w-[250px]"
+        />
       ),
       cell: (info) => {
-        const code = info.getValue() as string;
-        const url = info.row.getValue("url") as string;
         return (
-          <a href={url} target="_blank" rel="noopener noreferrer">
-            {code}
-          </a>
+          <div className="flex flex-row min-w-fit items-center justify-start gap-2">
+            {/* <Label className="text-sm min-w-fit text-ellipsis"> */}
+            {info.getValue() as string}
+            {/* </Label> */}
+          </div>
         );
       },
     },
+
+    // {
+    //   accessorKey: "code",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="Code" />
+    //   ),
+    //   cell: (info) => {
+    //     const code = info.getValue() as string;
+    //     const url = info.row.getValue("url") as string;
+    //     return (
+    //       <a href={url} target="_blank" rel="noopener noreferrer">
+    //         {code}
+    //       </a>
+    //     );
+    //   },
+    // },
 
     {
       accessorKey: "url",
