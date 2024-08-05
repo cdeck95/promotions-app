@@ -29,6 +29,7 @@ import {
   CalendarPlus,
   LayoutDashboard,
   CirclePlus,
+  Settings2Icon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -164,6 +165,32 @@ function MenuHeader() {
   //   setLogo(currentLogo);
   // }, [theme, systemTheme]);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(true);
+
+  useEffect(() => {
+    if (!user || !accessToken) return;
+
+    console.log("user: ", user);
+    console.log("accessToken: ", accessToken);
+
+    if (!accessToken.roles) {
+      console.log("No roles found in accessToken");
+      return;
+    }
+
+    const isAdmin = accessToken.roles.some(
+      (role) => role.key === "promos-admin"
+    );
+
+    console.log("isAdmin: ", isAdmin);
+
+    const isReadOnly = accessToken.roles.some((role) => role.key === "member");
+
+    setIsAdmin(isAdmin);
+    setIsReadOnly(isReadOnly);
+  }, [user, isAuthenticated, accessToken]);
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -201,41 +228,66 @@ function MenuHeader() {
                 </Link>
               </Button>
             </DialogTrigger>
-            <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
-              Admin Tools
-            </h2>
-            <DialogTrigger asChild>
-              <Button
-                asChild
-                variant={pathname === "/admin/promos" ? "secondary" : "ghost"}
-                className="w-full justify-start flex gap-2 my-1"
-              >
-                <Link
-                  href="/admin/promos"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                  <NotebookText className="h-4 w-4" />
-                  Promos
-                </Link>
-              </Button>
-            </DialogTrigger>
-            <DialogTrigger asChild>
-              <Button
-                asChild
-                variant={
-                  pathname === "/admin/add-promo" ? "secondary" : "ghost"
-                }
-                className="w-full justify-start flex gap-2 my-1"
-              >
-                <Link
-                  href="/admin/add-promo"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                  <CirclePlus className="h-4 w-4" />
-                  Add Promo
-                </Link>
-              </Button>
-            </DialogTrigger>
+            {(isAdmin || isReadOnly) && (
+              <>
+                <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
+                  Admin Tools
+                </h2>
+                <DialogTrigger asChild>
+                  <Button
+                    asChild
+                    variant={
+                      pathname === "/admin/promos" ? "secondary" : "ghost"
+                    }
+                    className="w-full justify-start flex gap-2 my-1"
+                  >
+                    <Link
+                      href="/admin/promos"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <NotebookText className="h-4 w-4" />
+                      Promos
+                    </Link>
+                  </Button>
+                </DialogTrigger>
+                {isAdmin && (
+                  <DialogTrigger asChild>
+                    <Button
+                      asChild
+                      variant={
+                        pathname === "/admin/add-promo" ? "secondary" : "ghost"
+                      }
+                      className="w-full justify-start flex gap-2 my-1"
+                    >
+                      <Link
+                        href="/admin/add-promo"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                      >
+                        <CirclePlus className="h-4 w-4" />
+                        Add Promo
+                      </Link>
+                    </Button>
+                  </DialogTrigger>
+                )}
+                <DialogTrigger asChild>
+                  <Button
+                    asChild
+                    variant={
+                      pathname === "/admin/settings" ? "secondary" : "ghost"
+                    }
+                    className="w-full justify-start flex gap-2 my-1"
+                  >
+                    <Link
+                      href="/admin/settings"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <Settings2Icon className="h-4 w-4" />
+                      Settings
+                    </Link>
+                  </Button>
+                </DialogTrigger>
+              </>
+            )}
           </nav>
         </SheetContent>
       </Sheet>
@@ -276,7 +328,7 @@ function MenuHeader() {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Link
-                href="https://www.discrescuenetwork.com/bugreport"
+                href="https://www.rush2wager.com/"
                 className="flex items-center gap-3 rounded-lg px-1 py-2 text-muted-foreground transition-all hover:text-primary"
               >
                 <MessageCircleQuestion className="h-4 w-4" />
