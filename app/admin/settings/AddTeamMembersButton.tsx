@@ -65,6 +65,17 @@ const AddTeamMembersButton: React.FC<InteractiveCommandItemProps> = ({
   const [searchTerm, setSearchTerm] = React.useState("");
   const [roleForInvite, setRoleForInvite] = React.useState<roles>(roles[1]);
 
+  const [isMobile, setIsMobile] = React.useState(false);
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 1024);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const {
     accessToken,
     getAccessToken,
@@ -124,8 +135,8 @@ const AddTeamMembersButton: React.FC<InteractiveCommandItemProps> = ({
               onClick={openPopup}
               disabled={isReadOnly}
             >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Team Member
+              <Plus className="lg:mr-2 p-0 h-4 w-4" />
+              {!isMobile && "Add Team Member"}
             </Button>
           </TooltipTrigger>
           {isReadOnly && (

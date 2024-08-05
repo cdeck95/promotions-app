@@ -269,7 +269,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 p-6">
+    <div className="grid grid-cols-1 gap-6 p-2 lg:p-6">
       <Card className="relative">
         <CardHeader className="flex flex-row justify-between">
           <div className="flex flex-col gap-2">
