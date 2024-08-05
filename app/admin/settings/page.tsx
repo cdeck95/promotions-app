@@ -15,38 +15,43 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { init, Roles, Users, Organizations } from "@kinde/management-api-js";
+import {
+  init,
+  Roles,
+  Users,
+  Organizations,
+  role,
+} from "@kinde/management-api-js";
 import axios from "axios";
 import { access } from "fs";
-import { ChevronDownIcon } from "lucide-react";
-
-interface User {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  picture: string;
-  roles: string[];
-}
+import { Check, ChevronDownIcon, Send, UserRoundX } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import { Client } from "pg-promise/typescript/pg-subset";
+import ClientCommandItem from "./ClientCommandItem";
+import { KindeUser } from "@/app/interfaces/KindeUser";
+import ClientRoleCommandItem from "./ClientRoleCommandItem";
+import AddTeamMembersButton from "./AddTeamMembersButton";
 
 export default async function Dashboard() {
   init();
   const { roles } = await Roles.getRoles();
-  console.log("roles: ", roles);
+  // console.log("roles: ", roles);
 
   const { getOrganization, isAuthenticated } = getKindeServerSession();
 
   const organization = await getOrganization();
   const orgCode = organization?.orgCode;
-  console.log("organization: ", organization);
-  console.log("orgCode: ", orgCode);
+  // console.log("organization: ", organization);
+  // console.log("orgCode: ", orgCode);
 
   const client_id = process.env.KINDE_CLIENT_ID!;
   const client_secret = process.env.KINDE_CLIENT_SECRET!;
@@ -70,11 +75,21 @@ export default async function Dashboard() {
   const accessTokenJSON = await accessTokenResponse.json();
   const accessToken = accessTokenJSON.access_token;
 
-  console.log("accessToken: ", accessToken);
+  // console.log("accessToken: ", accessToken);
 
   if (!accessToken || !orgCode || !isAuthenticated) {
     return <div>Loading...</div>;
   }
+  // org_a3685610f6a is the default org for R2W
+  const allUsersResponse = await axios.get(
+    `https://rush2wager.kinde.com/api/v1/organizations/org_a3685610f6a/users`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  const allUsers = allUsersResponse.data.organization_users;
 
   const response = await axios.get(
     `https://rush2wager.kinde.com/api/v1/organizations/${orgCode}/users`,
@@ -84,11 +99,12 @@ export default async function Dashboard() {
       },
     }
   );
-
-  console.log("response: ", response);
-
   const users = response.data.organization_users;
-  console.log("users: ", users);
+
+  const generalUsersNotInOrg = allUsers.filter(
+    (user: KindeUser) =>
+      !users.some((orgUser: KindeUser) => orgUser.id === user.id)
+  );
 
   if (!roles || !users) {
     return <div>Loading...</div>;
@@ -98,17 +114,141 @@ export default async function Dashboard() {
     return roles.includes("promos-admin");
   }
 
+  async function removeUserFromOrg(userId: string) {
+    "use server";
+    const response = await axios.delete(
+      `https://rush2wager.kinde.com/api/v1/organizations/${orgCode}/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    console.log("response: ", response);
+    if (response.status === 200) {
+      console.log("User removed from organization.");
+      revalidatePath("/admin/settings");
+    } else {
+      console.log("Error removing user from organization.");
+    }
+  }
+
+  async function addRoleToUser(roleId: string, user: KindeUser) {
+    "use server";
+    console.log("Adding role to user...");
+    console.log("roleId: ", roleId);
+    console.log("user: ", user);
+    // console.log("accessToken: ", accessToken);
+    // console.log("orgCode: ", orgCode);
+    // console.log(
+    //   "url: ",
+    //   `https://rush2wager.kinde.com/api/v1/organizations/${orgCode}/users/${user.id}/roles`
+    // );
+    const response = await fetch(
+      `https://rush2wager.kinde.com/api/v1/organizations/${orgCode}/users/${user.id}/roles`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          role_id: roleId,
+        }),
+      }
+    );
+    //console.log("response: ", response);
+    if (response.status === 200) {
+      console.log("Role added to user.");
+      revalidatePath("/admin/settings");
+    } else {
+      const data = await response.json();
+      console.log("data: ", data);
+      console.error("Error adding role to user.");
+      throw new Error("Error adding role to user.");
+    }
+  }
+
+  async function removeRoleFromUser(roleId: string, user: KindeUser) {
+    "use server";
+    console.log("Removing role from user...");
+    console.log("roleId: ", roleId);
+    console.log("user: ", user);
+    const response = await axios.delete(
+      `https://rush2wager.kinde.com/api/v1/organizations/${orgCode}/users/${user.id}/roles/${roleId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    console.log("response: ", response);
+    if (response.status === 200) {
+      console.log("Role removed from user.");
+      revalidatePath("/admin/settings");
+    } else {
+      console.error("Error removing role from user.");
+      throw new Error("Error removing role from user.");
+    }
+  }
+
+  async function addUserToOrg(userId: string, roles: role) {
+    "use server";
+    const response = await fetch(
+      `https://rush2wager.kinde.com/api/v1/organizations/${orgCode}/users`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          users: [
+            {
+              id: userId,
+              roles: [roles.key!],
+            },
+          ],
+        }),
+      }
+    );
+    console.log("response: ", response);
+    if (response.status === 200) {
+      console.log("User added to organization.");
+      revalidatePath("/admin/settings");
+    } else {
+      console.error("Error adding user to organization.");
+      throw new Error("Error adding user to organization.");
+    }
+  }
+
   return (
     <div className="grid grid-cols-1 gap-6 p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Team Members</CardTitle>
-          <CardDescription>
-            Invite your team members to collaborate.
-          </CardDescription>
+      <Card className="relative">
+        <CardHeader className="flex flex-row justify-between">
+          <div className="flex flex-col gap-2">
+            <CardTitle>Team Members</CardTitle>
+            <CardDescription>
+              Invite your team members to collaborate.
+            </CardDescription>
+          </div>
+          <div>
+            {roles &&
+              allUsers &&
+              generalUsersNotInOrg &&
+              generalUsersNotInOrg.length > 0 && (
+                <AddTeamMembersButton
+                  allUsers={generalUsersNotInOrg}
+                  addUserToOrg={addUserToOrg}
+                  roles={roles}
+                />
+              )}
+          </div>
         </CardHeader>
-        <CardContent className="grid gap-6">
-          {users.map((user: User) => (
+        <CardContent className="grid gap-6 mt-0 border-t pt-4">
+          {users.map((user: KindeUser) => (
             <div
               key={user.id}
               className="flex items-center justify-between space-x-4"
@@ -143,16 +283,19 @@ export default async function Dashboard() {
                       <CommandEmpty>No roles found.</CommandEmpty>
                       <CommandGroup>
                         {roles.map((role) => (
-                          <CommandItem
+                          <ClientRoleCommandItem
                             key={role.id}
-                            className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
-                          >
-                            <p>{role.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {role.description}
-                            </p>
-                          </CommandItem>
+                            user={user}
+                            role={role}
+                            addRoleToUser={addRoleToUser}
+                            removeRoleFromUser={removeRoleFromUser}
+                          />
                         ))}
+                        <CommandSeparator />
+                        <ClientCommandItem
+                          userId={user.id}
+                          removeUserFromOrg={removeUserFromOrg}
+                        />
                       </CommandGroup>
                     </CommandList>
                   </Command>
