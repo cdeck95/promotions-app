@@ -34,7 +34,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Drawer,
@@ -51,6 +51,16 @@ import Rush2WagerLogo from "@/public/main_logo_fullsize.png";
 import { KindeOrganization } from "../interfaces/KindeOrganization";
 import { KindeOrganizations } from "../interfaces/KindeOrganizations";
 import { DashboardIcon } from "@radix-ui/react-icons";
+import { access } from "fs";
+
+interface ExtendedUser {
+  id: string;
+  email: string | null;
+  given_name: string | null;
+  family_name: string | null;
+  picture: string | null;
+  roles: string[];
+}
 
 function SideMenu() {
   const pathname = usePathname();
@@ -77,16 +87,45 @@ function SideMenu() {
   const [showErrorMessage, setShowErrorMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState("Testing");
 
-  const { getOrganization, getUserOrganizations } = useKindeBrowserClient();
+  const {
+    getOrganization,
+    getUserOrganizations,
+    isAuthenticated,
+    user,
+    accessToken,
+  } = useKindeBrowserClient();
 
   const { toast } = useToast();
   const orgCode = getOrganization() as KindeOrganization;
-  // // console.log("orgCode at root: ", orgCode);
+  // console.log("orgCode at root: ", orgCode);
   const orgCodes = getUserOrganizations() as unknown as KindeOrganizations[];
-  // // console.log("orgCodes at root: ", orgCodes);
+  // console.log("orgCodes at root: ", orgCodes);
 
-  // // console.log("isAuthenticated: ", isAuthenticated);
-  // // console.log("user: ", user);
+  // console.log("isAuthenticated: ", isAuthenticated);
+  // console.log("user: ", user);
+  // console.log("accessToken: ", accessToken);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user || !accessToken) return;
+
+    console.log("user: ", user);
+    console.log("accessToken: ", accessToken);
+
+    if (!accessToken.roles) {
+      console.log("No roles found in accessToken");
+      return;
+    }
+
+    const isAdmin = accessToken.roles.some(
+      (role) => role.key === "promos-admin"
+    );
+
+    console.log("isAdmin: ", isAdmin);
+
+    setIsAdmin(isAdmin);
+  }, [user, isAuthenticated, accessToken]);
 
   const [systemTheme, setSystemTheme] = useState("light"); // Default to light theme
 
@@ -149,49 +188,57 @@ function SideMenu() {
                 Dashboard
               </Link>
             </Button>
-            <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
-              Admin Tools
-            </h2>
+            {isAdmin && (
+              <>
+                <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
+                  Admin Tools
+                </h2>
 
-            <Button
-              asChild
-              variant={pathname === "/admin/promos" ? "secondary" : "ghost"}
-              className="w-full justify-start flex gap-2 my-1"
-            >
-              <Link
-                href="/admin/promos"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <NotebookText className="h-4 w-4" />
-                Promos
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant={pathname === "/admin/add-promo" ? "secondary" : "ghost"}
-              className="w-full justify-start flex gap-2 my-1"
-            >
-              <Link
-                href="/admin/add-promo"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <CirclePlus className="h-4 w-4" />
-                Add Promo
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant={pathname === "/admin/settings" ? "secondary" : "ghost"}
-              className="w-full justify-start flex gap-2 my-1"
-            >
-              <Link
-                href="/admin/settings"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Settings2Icon className="h-4 w-4" />
-                Settings
-              </Link>
-            </Button>
+                <Button
+                  asChild
+                  variant={pathname === "/admin/promos" ? "secondary" : "ghost"}
+                  className="w-full justify-start flex gap-2 my-1"
+                >
+                  <Link
+                    href="/admin/promos"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  >
+                    <NotebookText className="h-4 w-4" />
+                    Promos
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant={
+                    pathname === "/admin/add-promo" ? "secondary" : "ghost"
+                  }
+                  className="w-full justify-start flex gap-2 my-1"
+                >
+                  <Link
+                    href="/admin/add-promo"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  >
+                    <CirclePlus className="h-4 w-4" />
+                    Add Promo
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant={
+                    pathname === "/admin/settings" ? "secondary" : "ghost"
+                  }
+                  className="w-full justify-start flex gap-2 my-1"
+                >
+                  <Link
+                    href="/admin/settings"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  >
+                    <Settings2Icon className="h-4 w-4" />
+                    Settings
+                  </Link>
+                </Button>
+              </>
+            )}
           </nav>
         </div>
       </div>
