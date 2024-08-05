@@ -48,6 +48,9 @@ export default async function Dashboard() {
   console.log("organization: ", organization);
   console.log("orgCode: ", orgCode);
 
+  const client_id = process.env.KINDE_CLIENT_ID!;
+  const client_secret = process.env.KINDE_CLIENT_SECRET!;
+
   const accessTokenResponse = await fetch(
     `https://rush2wager.kinde.com/oauth2/token`,
     {
@@ -58,8 +61,8 @@ export default async function Dashboard() {
       body: new URLSearchParams({
         audience: "https://rush2wager.kinde.com/api",
         grant_type: "client_credentials",
-        client_id: "410a8c843af14511b51fa19459c06a8f",
-        client_secret: "HwqTNPsve37WEGGOeqOCudyzYxxDTxFODGNfrZMACfl5w5EHNNa",
+        client_id: client_id,
+        client_secret: client_secret,
       }),
     }
   );
