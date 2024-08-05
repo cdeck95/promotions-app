@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import { usePromotions } from "@/app/hooks/usePromotions";
 import { DataTableColumnHeader } from "@/app/components/data-table-column-header";
 import { DataTable } from "@/app/components/data-table";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 export default function Home() {
   const { promotions, isLoading, fetchPromotions } = usePromotions();
@@ -52,6 +53,14 @@ export default function Home() {
   //console.log("Date 72 hours ago:", date72HoursAgo);
 
   const router = useRouter();
+  const {
+    accessToken,
+    getAccessToken,
+    isAuthenticated,
+    user,
+    isLoading: loadingUser,
+  } = useKindeBrowserClient();
+  const aTok = getAccessToken();
 
   const columns: ColumnDef<Promotion>[] = [
     // {
@@ -520,6 +529,14 @@ export default function Home() {
       },
     },
   ];
+
+  const hasPromosAdminRole = accessToken?.roles?.some(
+    (role) => role.key === "promos-admin"
+  );
+
+  if (isAuthenticated && !hasPromosAdminRole && !loadingUser) {
+    return <div>Unauthorized</div>;
+  }
 
   return (
     <div className="grid gridcol-1 min-h-screen w-full items-start p-4 lg:p-8 gap-4">

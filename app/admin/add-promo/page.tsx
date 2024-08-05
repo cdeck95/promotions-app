@@ -39,11 +39,24 @@ import BetUSLogo from "@/public/assets/betus.jpg";
 import BetOnlineLogo from "@/public/assets/betonline.jpg";
 import Bet365Logo from "@/public/assets/bet365.png";
 import FanaticsLogo from "@/public/assets/fanatics.png";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 function AddPromo() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const today = new Date();
+
+  const {
+    accessToken,
+    getAccessToken,
+    user,
+    isAuthenticated,
+    isLoading: loadingUser,
+  } = useKindeBrowserClient();
+  const aTok = getAccessToken();
+
+  // console.log(accessToken, aTok);
+
   const leagues = [
     {
       value: "NFL",
@@ -433,6 +446,14 @@ function AddPromo() {
       value: "Fanatics",
     },
   ];
+
+  const hasPromosAdminRole = accessToken?.roles?.some(
+    (role) => role.key === "promos-admin"
+  );
+
+  if (isAuthenticated && !hasPromosAdminRole && !loadingUser) {
+    return <div>Unauthorized</div>;
+  }
 
   return (
     <div className="grid grid-col-1 p-2 lg:p-6 gap-4 h-full w-full items-start">
