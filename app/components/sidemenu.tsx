@@ -30,6 +30,7 @@ import {
   Package2,
   ScrollText,
   Settings,
+  Settings2Icon,
   ShieldCheck,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -176,6 +177,19 @@ function SideMenu() {
               >
                 <CirclePlus className="h-4 w-4" />
                 Add Promo
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant={pathname === "/admin/settings" ? "secondary" : "ghost"}
+              className="w-full justify-start flex gap-2 my-1"
+            >
+              <Link
+                href="/admin/settings"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Settings2Icon className="h-4 w-4" />
+                Settings
               </Link>
             </Button>
           </nav>
