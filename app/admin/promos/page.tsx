@@ -60,7 +60,13 @@ export default function Home() {
     user,
     isLoading: loadingUser,
   } = useKindeBrowserClient();
-  const aTok = getAccessToken();
+
+  const hasPromosAdminRole = accessToken?.roles?.some(
+    (role) => role.key === "promos-admin"
+  );
+  const isReadOnly =
+    accessToken?.roles?.some((role) => role.key === "member") &&
+    !hasPromosAdminRole;
 
   const columns: ColumnDef<Promotion>[] = [
     // {
@@ -459,7 +465,7 @@ export default function Home() {
           }
         };
 
-        return (
+        return isReadOnly ? null : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -530,18 +536,19 @@ export default function Home() {
     },
   ];
 
-  const hasPromosAdminRole = accessToken?.roles?.some(
-    (role) => role.key === "promos-admin"
-  );
-
-  if (isAuthenticated && !hasPromosAdminRole && !loadingUser) {
+  if (isAuthenticated && !hasPromosAdminRole && !loadingUser && !isReadOnly) {
     return <div>Unauthorized</div>;
   }
 
   return (
     <div className="grid gridcol-1 min-h-screen w-full items-start p-4 lg:p-8 gap-4">
       <div className="grid grid-cols-1 gap-8 w-full ml-auto mr-auto">
-        <DataTable columns={columns} data={promotions} loading={isLoading} />
+        <DataTable
+          columns={columns}
+          data={promotions}
+          loading={isLoading}
+          isReadOnly={isReadOnly}
+        />
       </div>
     </div>
   );

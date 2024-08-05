@@ -41,6 +41,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface InteractiveCommandItemProps {
   allUsers: KindeUser[];
@@ -57,6 +64,20 @@ const AddTeamMembersButton: React.FC<InteractiveCommandItemProps> = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [roleForInvite, setRoleForInvite] = React.useState<roles>(roles[1]);
+
+  const {
+    accessToken,
+    getAccessToken,
+    user,
+    isAuthenticated,
+    isLoading: loadingUser,
+  } = useKindeBrowserClient();
+
+  const hasPromosAdminRole = accessToken?.roles?.some(
+    (role) => role.key === "promos-admin"
+  );
+
+  const isReadOnly = !hasPromosAdminRole;
 
   // console.log("allUsers: ", allUsers);
   console.log("roles: ", roles);
@@ -94,10 +115,26 @@ const AddTeamMembersButton: React.FC<InteractiveCommandItemProps> = ({
 
   return (
     <>
-      <Button variant="default" className="ml-auto" onClick={openPopup}>
-        <Plus className="mr-2 h-4 w-4" />
-        Add Team Member
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              variant="default"
+              className="ml-auto"
+              onClick={openPopup}
+              disabled={isReadOnly}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Team Member
+            </Button>
+          </TooltipTrigger>
+          {isReadOnly && (
+            <TooltipContent>
+              <Label className="text-xs">Action restricted to admins.</Label>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-[325px] lg:max-w-[800px]">
           <DialogHeader>
@@ -155,7 +192,11 @@ const AddTeamMembersButton: React.FC<InteractiveCommandItemProps> = ({
                       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                     </svg>
                   ) : (
-                    <Button variant="default" onClick={() => addUser(user.id)}>
+                    <Button
+                      variant="default"
+                      onClick={() => addUser(user.id)}
+                      disabled={isReadOnly}
+                    >
                       <Plus className="mr-2 h-4 w-4" />
                       Add as{" "}
                       {roles.find((role) => role.id === roleForInvite.id)?.name}

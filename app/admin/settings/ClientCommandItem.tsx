@@ -17,7 +17,7 @@ const ClientCommandItem: React.FC<InteractiveCommandItemProps> = ({
 
   return (
     <CommandItem
-      className="teamaspace-y-1 flex flex-row items-center mt-2 px-4 py-2 bg-red-900"
+      className="teamaspace-y-1 flex flex-row items-center mt-2 px-4 py-2"
       onSelect={async () => {
         try {
           setIsLoading(true);
@@ -58,10 +58,10 @@ const ClientCommandItem: React.FC<InteractiveCommandItemProps> = ({
         </svg>
       ) : (
         <>
-          <UserRoundX className="mr-4 h-6 w-6" />
+          <UserRoundX className="mr-4 h-6 w-6 text-red-500" />
           <div className="flex flex-col items-start">
-            <p>Remove from team</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-red-500">Remove from team</p>
+            <p className="text-xs text-muted-foreground text-red-500">
               Remove user from organization.
             </p>
           </div>

@@ -106,6 +106,7 @@ function SideMenu() {
   // console.log("accessToken: ", accessToken);
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(true);
 
   useEffect(() => {
     if (!user || !accessToken) return;
@@ -124,7 +125,10 @@ function SideMenu() {
 
     console.log("isAdmin: ", isAdmin);
 
+    const isReadOnly = accessToken.roles.some((role) => role.key === "member");
+
     setIsAdmin(isAdmin);
+    setIsReadOnly(isReadOnly);
   }, [user, isAuthenticated, accessToken]);
 
   const [systemTheme, setSystemTheme] = useState("light"); // Default to light theme
@@ -188,7 +192,7 @@ function SideMenu() {
                 Dashboard
               </Link>
             </Button>
-            {isAdmin && (
+            {(isAdmin || isReadOnly) && (
               <>
                 <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
                   Admin Tools
@@ -207,21 +211,23 @@ function SideMenu() {
                     Promos
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  variant={
-                    pathname === "/admin/add-promo" ? "secondary" : "ghost"
-                  }
-                  className="w-full justify-start flex gap-2 my-1"
-                >
-                  <Link
-                    href="/admin/add-promo"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                {isAdmin && (
+                  <Button
+                    asChild
+                    variant={
+                      pathname === "/admin/add-promo" ? "secondary" : "ghost"
+                    }
+                    className="w-full justify-start flex gap-2 my-1"
                   >
-                    <CirclePlus className="h-4 w-4" />
-                    Add Promo
-                  </Link>
-                </Button>
+                    <Link
+                      href="/admin/add-promo"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <CirclePlus className="h-4 w-4" />
+                      Add Promo
+                    </Link>
+                  </Button>
+                )}
                 <Button
                   asChild
                   variant={

@@ -33,12 +33,14 @@ interface DataTableProps {
   columns: ColumnDef<Promotion>[];
   data: Promotion[];
   loading: boolean;
+  isReadOnly?: boolean;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
   columns,
   data,
   loading,
+  isReadOnly,
 }) => {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

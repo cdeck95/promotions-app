@@ -40,13 +40,17 @@ import ClientCommandItem from "./ClientCommandItem";
 import { KindeUser } from "@/app/interfaces/KindeUser";
 import ClientRoleCommandItem from "./ClientRoleCommandItem";
 import AddTeamMembersButton from "./AddTeamMembersButton";
+import { Label } from "@/components/ui/label";
+import { or } from "sequelize";
 
 export default async function Dashboard() {
   init();
   const { roles } = await Roles.getRoles();
   // console.log("roles: ", roles);
 
-  const { getOrganization, isAuthenticated } = getKindeServerSession();
+  const { getOrganization, isAuthenticated, getAccessToken } =
+    getKindeServerSession();
+  const userAccessToken = await getAccessToken();
 
   const organization = await getOrganization();
   const orgCode = organization?.orgCode;
@@ -75,7 +79,7 @@ export default async function Dashboard() {
   const accessTokenJSON = await accessTokenResponse.json();
   const accessToken = accessTokenJSON.access_token;
 
-  // console.log("accessToken: ", accessToken);
+  console.log("accessToken: ", accessToken);
 
   if (!accessToken || !orgCode || !isAuthenticated) {
     return <div>Loading...</div>;
@@ -112,6 +116,31 @@ export default async function Dashboard() {
 
   function isAdmin(roles: string[]) {
     return roles.includes("promos-admin");
+  }
+
+  async function refreshClaims(userId: string) {
+    "use server";
+    console.log(`Refreshing claims for user ${userId}...`);
+    const headers = {
+      Accept: "application/json; charset=utf-8",
+      Authorization: `Bearer ${accessToken}`,
+    };
+    const response = await fetch(
+      `https://rush2wager.kinde.com/api/v1/users/${userId}/refresh_claims`,
+      {
+        method: "POST",
+        headers: headers,
+      }
+    );
+
+    console.log("response: ", response.json());
+    if (response.status === 200) {
+      console.log("User claims refreshed.");
+      revalidatePath("/admin/settings");
+    } else {
+      console.error("Error refreshing user claims.");
+      throw new Error("Error refreshing user claims.");
+    }
   }
 
   async function removeUserFromOrg(userId: string) {
@@ -186,6 +215,7 @@ export default async function Dashboard() {
     console.log("response: ", response);
     if (response.status === 200) {
       console.log("Role removed from user.");
+      //refreshClaims(user.id);
       revalidatePath("/admin/settings");
     } else {
       console.error("Error removing role from user.");
@@ -222,6 +252,20 @@ export default async function Dashboard() {
       console.error("Error adding user to organization.");
       throw new Error("Error adding user to organization.");
     }
+  }
+
+  const hasPromosAdminRole = userAccessToken?.roles?.some(
+    (role: role) => role.key === "promos-admin"
+  );
+  const isReadOnly =
+    userAccessToken?.roles?.some((role: role) => role.key === "member") &&
+    !hasPromosAdminRole;
+
+  console.log("hasPromosAdminRole: ", hasPromosAdminRole);
+  console.log("isReadOnly: ", isReadOnly);
+
+  if (!hasPromosAdminRole && !isReadOnly) {
+    return <div>Unauthorized</div>;
   }
 
   return (
@@ -269,38 +313,45 @@ export default async function Dashboard() {
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                 </div>
               </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="ml-auto">
-                    {isAdmin(user.roles) ? "Admin" : "Member"}{" "}
-                    <ChevronDownIcon className="ml-2 h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0" align="end">
-                  <Command>
-                    <CommandInput placeholder="Select new role..." />
-                    <CommandList>
-                      <CommandEmpty>No roles found.</CommandEmpty>
-                      <CommandGroup>
-                        {roles.map((role) => (
-                          <ClientRoleCommandItem
-                            key={role.id}
-                            user={user}
-                            role={role}
-                            addRoleToUser={addRoleToUser}
-                            removeRoleFromUser={removeRoleFromUser}
+              {isReadOnly ? (
+                <Label className="text-muted-foreground">
+                  {" "}
+                  {isAdmin(user.roles) ? "Admin" : "Member"}{" "}
+                </Label>
+              ) : (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="ml-auto">
+                      {isAdmin(user.roles) ? "Admin" : "Member"}{" "}
+                      <ChevronDownIcon className="ml-2 h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0" align="end">
+                    <Command>
+                      <CommandInput placeholder="Select new role..." />
+                      <CommandList>
+                        <CommandEmpty>No roles found.</CommandEmpty>
+                        <CommandGroup>
+                          {roles.map((role) => (
+                            <ClientRoleCommandItem
+                              key={role.id}
+                              user={user}
+                              role={role}
+                              addRoleToUser={addRoleToUser}
+                              removeRoleFromUser={removeRoleFromUser}
+                            />
+                          ))}
+                          <CommandSeparator />
+                          <ClientCommandItem
+                            userId={user.id}
+                            removeUserFromOrg={removeUserFromOrg}
                           />
-                        ))}
-                        <CommandSeparator />
-                        <ClientCommandItem
-                          userId={user.id}
-                          removeUserFromOrg={removeUserFromOrg}
-                        />
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           ))}
         </CardContent>
