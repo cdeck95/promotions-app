@@ -1,9 +1,25 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { KindeUser } from "@/app/interfaces/KindeUser";
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
   console.log("Request body:", body);
+
+  const { getAccessToken } = getKindeServerSession();
+  const accessToken = await getAccessToken();
+
+  if (
+    !accessToken ||
+    !accessToken.roles ||
+    !accessToken.roles?.some((role) => role.key === "promos-admin")
+  ) {
+    return NextResponse.json(
+      { message: "You do not have permission to create promotions" },
+      { status: 403 }
+    );
+  }
 
   try {
     const jsonResponse = await handleUpload({

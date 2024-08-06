@@ -3,7 +3,9 @@ import Promotion from "../../../lib/models/Promotion";
 import { Op } from "sequelize";
 import moment from "moment";
 import { NextApiRequest } from "next";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { put } from "@vercel/blob";
+import { KindeUser } from "@/app/interfaces/KindeUser";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -68,6 +70,20 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const { getAccessToken } = getKindeServerSession();
+    const accessToken = await getAccessToken();
+
+    if (
+      !accessToken ||
+      !accessToken.roles ||
+      !accessToken.roles?.some((role) => role.key === "promos-admin")
+    ) {
+      return NextResponse.json(
+        { message: "You do not have permission to create promotions" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     console.log("Creating promotion with data:", body);
 

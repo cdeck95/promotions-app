@@ -161,6 +161,7 @@ function AddPromo() {
     description: "",
     url: "",
     image: "",
+    imageURL: "",
     leagueName: "",
     postedDateTime: today,
     expiryDate: addDays(today, 1),
@@ -169,7 +170,10 @@ function AddPromo() {
   });
   const { toast } = useToast();
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e: FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     console.log("Promotion data:", promotion);
     console.log("Form data:", e);
@@ -183,6 +187,7 @@ function AddPromo() {
         variant: "destructive",
         duration: 3000,
       });
+      setLoading(false);
       return;
     }
     console.log("Platform is provided");
@@ -196,6 +201,8 @@ function AddPromo() {
         variant: "destructive",
         duration: 3000,
       });
+      setLoading(false);
+
       return;
     }
     console.log("Title is provided");
@@ -209,6 +216,32 @@ function AddPromo() {
         variant: "destructive",
         duration: 3000,
       });
+      setLoading(false);
+
+      return;
+    }
+
+    let imageURL = "";
+
+    try {
+      if (fileInputRef.current?.files) {
+        const file = fileInputRef.current.files[0];
+        const newBlob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/promoImage/upload",
+        });
+        setPromotion({ ...promotion, imageURL: newBlob.url });
+        imageURL = newBlob.url;
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Error!",
+        description: "An error occurred while uploading the image.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      setLoading(false);
       return;
     }
 
@@ -223,7 +256,7 @@ function AddPromo() {
           title: promotion.title,
           description: promotion.description,
           platform: promotion.platform,
-          image: promotion.image,
+          image: imageURL,
           postedDateTime: promotion.postedDateTime,
           leagueName: promotion.leagueName,
           code: promotion.code,
@@ -233,6 +266,43 @@ function AddPromo() {
           applicableState: promotion.applicableState,
         }),
       });
+
+      if (response.status === 400) {
+        toast({
+          title: "Bad Request",
+          description:
+            "The request was invalid. Please check your input and try again.",
+          variant: "destructive",
+          duration: 3000,
+        });
+        setLoading(false);
+
+        return;
+        // throw new Error("Failed to create promotion: Bad Request");
+      } else if (response.status === 403) {
+        toast({
+          title: "Forbidden",
+          description: "You do not have permission to perform this action.",
+          variant: "destructive",
+          duration: 3000,
+        });
+        setLoading(false);
+
+        return;
+        // throw new Error("Failed to create promotion: Forbidden");
+      } else if (response.status >= 500 && response.status < 600) {
+        toast({
+          title: "Server Error",
+          description:
+            "An error occurred on the server. Please try again later.",
+          variant: "destructive",
+          duration: 3000,
+        });
+        setLoading(false);
+
+        return;
+        // throw new Error("Failed to create promotion: Server Error");
+      }
 
       const data = await response.json();
       console.log("Response data:", data);
@@ -245,16 +315,17 @@ function AddPromo() {
           variant: "destructive",
           duration: 3000,
         });
-      } else {
-        // Handle successful response
-        console.log("Promotion created successfully:", data);
-        toast({
-          title: "Success!",
-          description: "Promotion created successfully.",
-          variant: "default",
-          duration: 3000,
-        });
       }
+
+      // Handle successful response
+      console.log("Promotion created successfully:", data);
+      toast({
+        title: "Success!",
+        description: "Promotion created successfully.",
+        variant: "default",
+        duration: 3000,
+      });
+      setLoading(false);
     } catch (error) {
       console.error("Error creating promotion:", error);
       toast({
@@ -263,6 +334,9 @@ function AddPromo() {
         variant: "destructive",
         duration: 3000,
       });
+    } finally {
+      setLoading(false);
+      setDrawerOpen(false);
     }
     resetForm();
   };
@@ -316,6 +390,7 @@ function AddPromo() {
       description: "",
       url: "",
       image: "",
+      imageURL: "",
       leagueName: "",
       postedDateTime: today,
       expiryDate: addDays(today, 1),
@@ -360,11 +435,16 @@ function AddPromo() {
       throw new Error("No file selected");
     }
     const file = fileInputRef.current.files[0];
-    const newBlob = await upload(file.name, file, {
-      access: "public",
-      handleUploadUrl: "/api/promoImage/upload",
-    });
-    setPromotion({ ...promotion, image: newBlob.url });
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPromotion({
+          ...promotion,
+          image: reader.result as string,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const platforms = [
@@ -447,21 +527,24 @@ function AddPromo() {
     },
   ];
 
+  const [customPlatform, setCustomPlatform] = useState("");
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+
   const hasPromosAdminRole = accessToken?.roles?.some(
     (role) => role.key === "promos-admin"
   );
 
-  if (isAuthenticated && !hasPromosAdminRole && !loadingUser) {
-    return <div>Unauthorized</div>;
-  }
+  // if (isAuthenticated && !hasPromosAdminRole && !loadingUser) {
+  //   return <div>Unauthorized</div>;
+  // }
 
   return (
     <div className="grid grid-col-1 p-2 lg:p-6 gap-4 h-full w-full items-start">
       <div className="text-2xl font-bold text-left pb-2 my-0 bg-gradient-custom">
         Add Promotion
       </div>
-      <main className="grid flex-1 gap-4 overflow-auto md:grid-cols-2 lg:grid-cols-3">
-        <div className="relative flex flex-col items-start gap-8 md:flex">
+      <main className="grid flex-1 gap-4 overflow-auto md:grid-cols-2 lg:grid-cols-5">
+        <div className="relative flex flex-col items-start gap-8 md:flex lg:col-span-3">
           <form
             className="grid w-full items-start gap-6"
             onSubmit={handleSubmit}
@@ -473,9 +556,16 @@ function AddPromo() {
               <div className="grid gap-3">
                 <Label htmlFor="name">Platform</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setPromotion({ ...promotion, platform: value })
-                  }
+                  value={promotion.platform}
+                  onValueChange={(value) => {
+                    if (value === "other") {
+                      setIsOtherSelected(true);
+                      setPromotion({ ...promotion, platform: customPlatform });
+                    } else {
+                      setIsOtherSelected(false);
+                      setPromotion({ ...promotion, platform: value });
+                    }
+                  }}
                 >
                   <SelectTrigger className="items-start [&_[data-description]]:hidden">
                     <SelectValue placeholder="Select Platform" />
@@ -504,8 +594,28 @@ function AddPromo() {
                         </div>
                       </SelectItem>
                     ))}
+                    <SelectItem value="other">Other (write in)</SelectItem>
                   </SelectContent>
                 </Select>
+                {/* {platformError && (
+                  <Label className="text-red-800 text-sm">
+                    {platformError}
+                  </Label>
+                )} */}
+                {isOtherSelected && (
+                  <Input
+                    type="text"
+                    id="otherPlatform"
+                    name="Other Platform"
+                    placeholder="Enter platform name"
+                    value={customPlatform}
+                    onChange={(e) => {
+                      setCustomPlatform(e.target.value);
+                      setPromotion({ ...promotion, platform: e.target.value });
+                    }}
+                    className="mt-2 p-2 border rounded"
+                  />
+                )}
                 {platformError && (
                   <Label className="text-red-800 text-sm">
                     {platformError}
@@ -592,6 +702,7 @@ function AddPromo() {
               <div className="grid gap-3">
                 <Label htmlFor="bin">League Name</Label>
                 <Select
+                  value={promotion.leagueName}
                   onValueChange={(value) =>
                     setPromotion({ ...promotion, leagueName: value })
                   }
@@ -785,7 +896,24 @@ function AddPromo() {
               </div>
               <div className="flex gap-3 mt-4">
                 <Button type="submit" onClick={handleSubmit}>
-                  Confirm
+                  {loading ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="animate-spin"
+                    >
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                  ) : (
+                    "Confirm"
+                  )}
                 </Button>
                 <Button variant="outline" onClick={() => setDrawerOpen(false)}>
                   Cancel

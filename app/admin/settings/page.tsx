@@ -301,14 +301,14 @@ export default async function Dashboard() {
                 <Avatar>
                   <AvatarImage src={user.picture} />
                   <AvatarFallback>
-                    {user.first_name?.[0]}
-                    {user.last_name?.[0]}
+                    {user.given_name?.[0]}
+                    {user.family_name?.[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium leading-none">
-                    {user.first_name}
-                    {user.last_name}
+                    {user.given_name}
+                    {user.family_name}
                   </p>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                 </div>

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
 import Promotion from "@/lib/models/Promotion";
+import { KindeUser } from "@/app/interfaces/KindeUser";
 
 export async function PATCH(
   request: Request,
@@ -13,6 +16,20 @@ export async function PATCH(
 
     if (!id) {
       return NextResponse.json({ message: "Id not provided" }, { status: 400 });
+    }
+
+    const { getAccessToken } = getKindeServerSession();
+    const accessToken = await getAccessToken();
+
+    if (
+      !accessToken ||
+      !accessToken.roles ||
+      !accessToken.roles?.some((role) => role.key === "promos-admin")
+    ) {
+      return NextResponse.json(
+        { message: "You do not have permission to create promotions" },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
