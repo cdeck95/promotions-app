@@ -223,8 +223,8 @@ function MenuHeader() {
                   href="/"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <DashboardIcon className="h-4 w-4" />
-                  Dashboard
+                  <NotebookText className="h-4 w-4" />
+                  Promos
                 </Link>
               </Button>
             </DialogTrigger>
@@ -233,23 +233,6 @@ function MenuHeader() {
                 <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
                   Admin Tools
                 </h2>
-                <DialogTrigger asChild>
-                  <Button
-                    asChild
-                    variant={
-                      pathname === "/admin/promos" ? "secondary" : "ghost"
-                    }
-                    className="w-full justify-start flex gap-2 my-1"
-                  >
-                    <Link
-                      href="/admin/promos"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                      <NotebookText className="h-4 w-4" />
-                      Promos
-                    </Link>
-                  </Button>
-                </DialogTrigger>
                 {isAdmin && (
                   <DialogTrigger asChild>
                     <Button
