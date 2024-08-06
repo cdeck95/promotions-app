@@ -35,14 +35,14 @@ const ClientRoleCommandItem: React.FC<InteractiveCommandItemProps> = ({
             await removeRoleFromUser(role.id!, user);
             toast({
               title: `Success`,
-              description: `Role "${role.name}" removed from ${user.first_name}`,
+              description: `Role "${role.name}" removed from ${user.given_name}`,
               variant: "default",
               duration: 3000,
             });
           } catch (error) {
             toast({
               title: "Error",
-              description: `An error occurred while removing the role ${role.name} to ${user.first_name}.`,
+              description: `An error occurred while removing the role ${role.name} to ${user.given_name}.`,
               variant: "destructive",
               duration: 3000,
             });
@@ -54,14 +54,14 @@ const ClientRoleCommandItem: React.FC<InteractiveCommandItemProps> = ({
             await addRoleToUser(role.id!, user);
             toast({
               title: `Success`,
-              description: `Role ${role.name} added to ${user.first_name}`,
+              description: `Role ${role.name} added to ${user.given_name}`,
               variant: "default",
               duration: 3000,
             });
           } catch (error) {
             toast({
               title: "Error",
-              description: `An error occurred while adding the role ${role.name} to ${user.first_name}.`,
+              description: `An error occurred while adding the role ${role.name} to ${user.given_name}.`,
               variant: "destructive",
               duration: 3000,
             });
