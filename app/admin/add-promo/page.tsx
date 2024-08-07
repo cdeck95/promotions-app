@@ -192,6 +192,19 @@ function AddPromo() {
     }
     console.log("Platform is provided");
 
+    if (promotion.platform === "other" && customPlatform === "") {
+      setPlatformError("Platform is required");
+      setDrawerOpen(false);
+      toast({
+        title: "Error!",
+        description: "Platform is required.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      setLoading(false);
+      return;
+    }
+
     if (!promotion.title) {
       setTitleError("Title is required");
       setDrawerOpen(false);
@@ -255,7 +268,10 @@ function AddPromo() {
         body: JSON.stringify({
           title: promotion.title,
           description: promotion.description,
-          platform: promotion.platform,
+          platform:
+            promotion.platform === "other"
+              ? customPlatform
+              : promotion.platform,
           image: imageURL,
           postedDateTime: promotion.postedDateTime,
           leagueName: promotion.leagueName,
@@ -560,7 +576,7 @@ function AddPromo() {
                   onValueChange={(value) => {
                     if (value === "other") {
                       setIsOtherSelected(true);
-                      setPromotion({ ...promotion, platform: customPlatform });
+                      setPromotion({ ...promotion, platform: "other" });
                     } else {
                       setIsOtherSelected(false);
                       setPromotion({ ...promotion, platform: value });
@@ -611,7 +627,7 @@ function AddPromo() {
                     value={customPlatform}
                     onChange={(e) => {
                       setCustomPlatform(e.target.value);
-                      setPromotion({ ...promotion, platform: e.target.value });
+                      setPromotion({ ...promotion, platform: "other" });
                     }}
                     className="mt-2 p-2 border rounded"
                   />

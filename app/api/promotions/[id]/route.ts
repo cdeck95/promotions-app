@@ -86,6 +86,31 @@ export async function PATCH(
       );
     }
 
+    if (body.image === "" && promotion.image !== "") {
+      // Delete the image from Vercel Blob Storage
+      if (promotion.image) {
+        try {
+          await del(promotion.image);
+          console.log(
+            "Deleted image from Vercel Blob Storage:",
+            promotion.image
+          );
+        } catch (blobError) {
+          console.error(
+            "Error deleting image from Vercel Blob Storage:",
+            blobError
+          );
+          return NextResponse.json(
+            {
+              message: "Error deleting image from Vercel Blob Storage",
+              error: blobError,
+            },
+            { status: 500 }
+          );
+        }
+      }
+    }
+
     await promotion.update(body);
 
     console.log("Updated promotion:", promotion);
