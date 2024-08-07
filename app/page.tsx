@@ -487,6 +487,10 @@ export default function Home() {
           }
         };
 
+        const handleEdit = () => {
+          router.push(`/admin/promotions/${promotion.id}`);
+        };
+
         return isReadOnly || !hasPromosAdminRole ? null : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -496,7 +500,11 @@ export default function Home() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onSelect={handleEdit}>
+                Edit Promo
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>League</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>

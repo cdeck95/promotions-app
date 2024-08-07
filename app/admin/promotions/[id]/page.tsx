@@ -6,6 +6,7 @@ import React, {
   FormEvent,
   useRef,
   ChangeEventHandler,
+  useEffect,
 } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import Promotion from "@/lib/models/Promotion";
+import Promotion, { PromotionAttributes } from "@/lib/models/Promotion";
 import { upload } from "@vercel/blob/client";
 import {
   Select,
@@ -41,10 +42,41 @@ import Bet365Logo from "@/public/assets/bet365.png";
 import FanaticsLogo from "@/public/assets/fanatics.png";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
-function AddPromo() {
+function AddPromo({ params }: { params: { id: string } }) {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const today = new Date();
+  const promoId = params.id;
+  console.log("Promotion ID:", promoId);
+
+  const [promotion, setPromotion] = useState<PromotionAttributes>({
+    id: -1,
+    platform: "",
+    code: "",
+    title: "",
+    description: "",
+    url: "",
+    image: "",
+    leagueName: "",
+    postedDateTime: today,
+    expiryDate: addDays(today, 1),
+    featured: false,
+    applicableState: "",
+  });
+
+  useEffect(() => {
+    if (promoId) {
+      fetch(`/api/promotions/${promoId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Promotion data:", data);
+          setPromotion(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching promotion:", error);
+        });
+    }
+  }, [promoId]);
 
   const {
     accessToken,
@@ -153,21 +185,6 @@ function AddPromo() {
   const [titleError, setTitleError] = useState<string | null>(null);
   const [urlError, setUrlError] = useState<string | null>(null);
 
-  const [promotion, setPromotion] = useState({
-    id: -1,
-    platform: "",
-    code: "",
-    title: "",
-    description: "",
-    url: "",
-    image: "",
-    imageURL: "",
-    leagueName: "",
-    postedDateTime: today,
-    expiryDate: addDays(today, 1),
-    featured: false,
-    applicableState: "",
-  });
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
@@ -223,27 +240,27 @@ function AddPromo() {
 
     let imageURL = "";
 
-    try {
-      if (fileInputRef.current?.files) {
-        const file = fileInputRef.current.files[0];
-        const newBlob = await upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/promoImage/upload",
-        });
-        setPromotion({ ...promotion, imageURL: newBlob.url });
-        imageURL = newBlob.url;
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      toast({
-        title: "Error!",
-        description: "An error occurred while uploading the image.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      setLoading(false);
-      return;
-    }
+    // try {
+    //   if (fileInputRef.current?.files) {
+    //     const file = fileInputRef.current.files[0];
+    //     const newBlob = await upload(file.name, file, {
+    //       access: "public",
+    //       handleUploadUrl: "/api/promoImage/upload",
+    //     });
+    //     setPromotion({ ...promotion, imageURL: newBlob.url });
+    //     imageURL = newBlob.url;
+    //   }
+    // } catch (error) {
+    //   console.error("Error uploading image:", error);
+    //   toast({
+    //     title: "Error!",
+    //     description: "An error occurred while uploading the image.",
+    //     variant: "destructive",
+    //     duration: 3000,
+    //   });
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
       // Send POST request to the backend
@@ -390,7 +407,6 @@ function AddPromo() {
       description: "",
       url: "",
       image: "",
-      imageURL: "",
       leagueName: "",
       postedDateTime: today,
       expiryDate: addDays(today, 1),
@@ -541,7 +557,7 @@ function AddPromo() {
   return (
     <div className="grid grid-col-1 p-2 lg:p-6 gap-4 h-full w-full items-start">
       <div className="text-2xl font-bold text-left pb-2 my-0 bg-gradient-custom">
-        Add Promotion
+        Promo #{promoId}
       </div>
       <main className="grid flex-1 gap-4 overflow-auto md:grid-cols-2 lg:grid-cols-5">
         <div className="relative flex flex-col items-start gap-8 md:flex lg:col-span-3">
@@ -702,7 +718,7 @@ function AddPromo() {
               <div className="grid gap-3">
                 <Label htmlFor="bin">League Name</Label>
                 <Select
-                  value={promotion.leagueName}
+                  value={promotion.leagueName || ""}
                   onValueChange={(value) =>
                     setPromotion({ ...promotion, leagueName: value })
                   }
