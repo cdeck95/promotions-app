@@ -56,10 +56,12 @@ export const metadata: Metadata = {
   },
 };
 
-const { getAccessToken } = getKindeServerSession();
+const { getAccessToken, getUser } = getKindeServerSession();
 const accessToken = await getAccessToken();
+const user = await getUser();
 
-console.log(accessToken);
+console.log("Access Token: ", accessToken);
+console.log("User: ", user);
 
 export default function RootLayout({
   children,
