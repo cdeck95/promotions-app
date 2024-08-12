@@ -22,6 +22,7 @@ import {
   CalendarSearch,
   CirclePlus,
   Currency,
+  HandCoins,
   Home,
   LayoutDashboard,
   LineChart,
@@ -190,6 +191,19 @@ function SideMenu() {
               >
                 <NotebookText className="h-4 w-4" />
                 Promos
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant={pathname === "/pricing" ? "secondary" : "ghost"}
+              className="w-full justify-start flex gap-2 my-1"
+            >
+              <Link
+                href="/pricing"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <HandCoins className="h-4 w-4" />
+                Pricing
               </Link>
             </Button>
             {(isAdmin || isReadOnly) && (
