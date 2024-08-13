@@ -66,7 +66,7 @@ export default function PricingPage() {
               key={plan.title}
               {...plan}
               isYearly={isYearly}
-              productLink="https://buy.stripe.com/test_9AQ9Cq52vawsfzWcMN"
+              productLink="https://buy.stripe.com/test_8wM146aNp2NT72E6oo"
             />
           );
         })}

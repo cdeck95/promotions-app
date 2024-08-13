@@ -4,16 +4,19 @@ import { toast } from "@/components/ui/use-toast";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { use, useEffect } from "react";
+import { useUserProperties } from "../hooks/useUserProperties";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PricingPage() {
+  const { isAuthenticated, user } = useKindeBrowserClient();
+  const { properties, loading, error, refresh } = useUserProperties(
+    user?.id || ""
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
   const checkoutSessionId = searchParams.get("checkout_session_id");
 
-  const { isAuthenticated, user } = useKindeBrowserClient();
-
   const [updateComplete, setUpdateComplete] = React.useState(false);
-  const [loadingUserData, setLoadingUserData] = React.useState(false);
 
   useEffect(() => {
     if (checkoutSessionId && user) {
@@ -66,13 +69,26 @@ export default function PricingPage() {
         variant: "default",
         duration: 5000,
       });
+      console.log("Fetching new user properties...");
+      refresh();
     }
   }, [updateComplete]);
 
   return (
-    <div>
+    <div className="grid gridcol-1 min-h-screen w-full items-start p-4 lg:p-8 gap-4">
       <h1>Pricing Page</h1>
       {checkoutSessionId && <p>Checkout Session ID: {checkoutSessionId}</p>}
+      <h2>User Profile</h2>
+      {loading ? (
+        <Skeleton className="h-10 w-10" />
+      ) : (
+        <p>Stripe Customer ID: {properties.stripeCustomerId}</p>
+      )}
+      {loading ? (
+        <Skeleton className="h-10 w-10" />
+      ) : (
+        <p>Subscribed: {properties.isSubscribed ? "Yes" : "No"}</p>
+      )}
       {updateComplete && (
         <>
           <p>Subscription updated successfully</p>

@@ -1,20 +1,25 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useUserProperties } from "../hooks/useUserProperties";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { Label } from "@/components/ui/label";
 
 export default function UserSettings() {
+  const { user } = useKindeBrowserClient();
+  const { properties, loading, error } = useUserProperties(user?.id || "");
+  const manageSubscriptionLink = `https://billing.stripe.com/p/login/test_28ocPB748ajZaVa5kk`;
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="grid gridcol-1 min-h-screen w-full items-start p-4 lg:p-8 gap-4">
-      <Button
-        onClick={() =>
-          window.open(
-            "https://billing.stripe.com/p/login/test_6oE4hHfNgePw27m7ss"
-          )
-        }
-      >
-        <a href="https://billing.stripe.com/p/login/test_6oE4hHfNgePw27m7ss">
-          Manage Subscription
-        </a>
+    <div className="flex flex-col gap-6 justify-center p-4">
+      <h2>User Profile</h2>
+      <Label>Stripe Customer ID: {properties.stripeCustomerId}</Label>
+      <Label>Subscribed: {properties.isSubscribed ? "Yes" : "No"}</Label>
+      <Button onClick={() => window.open(manageSubscriptionLink)}>
+        <a href={manageSubscriptionLink}>Manage Subscription</a>
       </Button>
     </div>
   );

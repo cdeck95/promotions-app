@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import CheckItem from "./CheckItem";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { Label } from "@/components/ui/label";
+import { useUserProperties } from "@/app/hooks/useUserProperties";
 
 const PricingCard = ({
   isYearly,
@@ -30,6 +31,7 @@ const PricingCard = ({
   const extendedUser = user as ExtendedUser;
   const email = extendedUser?.email;
   const prefilledProductLink = `${productLink}?prefilled_email=${email}`;
+  const { properties, loading, error } = useUserProperties(user?.id || "");
 
   return (
     <Card
@@ -93,21 +95,29 @@ const PricingCard = ({
           ))}
         </CardContent>
       </div>
-      <CardFooter className="mt-2">
-        {isAuthenticated && user ? (
-          <Button
-            onClick={() => window.open(prefilledProductLink)}
-            className="relative inline-flex w-full items-center justify-center rounded-md bg-black text-white dark:bg-white px-6 font-medium  dark:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-          >
-            <div className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe] to-[#8678f9] opacity-75 blur" />
-            <a href={prefilledProductLink}>{actionLabel}</a>
-          </Button>
-        ) : (
+      {properties.isSubscribed ? (
+        <CardFooter className="mt-2">
           <Label className="text-sm text-center text-zinc-700 dark:text-zinc-300">
-            Sign in to purchase
+            You are subscribed
           </Label>
-        )}{" "}
-      </CardFooter>
+        </CardFooter>
+      ) : (
+        <CardFooter className="mt-2">
+          {isAuthenticated && user ? (
+            <Button
+              onClick={() => window.open(prefilledProductLink)}
+              className="relative inline-flex w-full items-center justify-center rounded-md bg-black text-white dark:bg-white px-6 font-medium  dark:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+            >
+              <div className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe] to-[#8678f9] opacity-75 blur" />
+              <a href={prefilledProductLink}>{actionLabel}</a>
+            </Button>
+          ) : (
+            <Label className="text-sm text-center text-zinc-700 dark:text-zinc-300">
+              Sign in to purchase
+            </Label>
+          )}{" "}
+        </CardFooter>
+      )}
     </Card>
   );
 };
