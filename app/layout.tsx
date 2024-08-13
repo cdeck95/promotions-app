@@ -7,6 +7,7 @@ import SideMenu from "./components/sidemenu";
 import { Toaster } from "@/components/ui/toaster";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,10 +57,12 @@ export const metadata: Metadata = {
   },
 };
 
-const { getAccessToken } = getKindeServerSession();
+const { getAccessToken, getUser } = getKindeServerSession();
 const accessToken = await getAccessToken();
+const user = await getUser();
 
-console.log(accessToken);
+console.log("Access Token: ", accessToken);
+console.log("User: ", user);
 
 export default function RootLayout({
   children,
@@ -81,7 +84,9 @@ export default function RootLayout({
             <div className="w-full">
               <MenuHeader />
               <main className="p-0 main-overflow">
-                <ScrollArea className="w-full h-full">{children}</ScrollArea>
+                <ScrollArea className="w-full h-full">
+                  <Suspense>{children}</Suspense>
+                </ScrollArea>
               </main>
             </div>
           </div>

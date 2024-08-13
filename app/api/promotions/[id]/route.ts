@@ -5,6 +5,46 @@ import { del } from "@vercel/blob";
 import Promotion from "@/lib/models/Promotion";
 import { KindeUser } from "@/app/interfaces/KindeUser";
 
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    console.log("GET method called");
+
+    const id = params.id;
+    console.log("id", id);
+
+    if (!id) {
+      return NextResponse.json({ message: "Id not provided" }, { status: 400 });
+    }
+
+    const { getAccessToken } = getKindeServerSession();
+    const accessToken = await getAccessToken();
+
+    console.log("accessToken", accessToken);
+
+    if (!accessToken) {
+      return NextResponse.json(
+        { message: "No access token found" },
+        { status: 401 }
+      );
+    }
+
+    const promotion = await Promotion.findByPk(id);
+
+    console.log("Retrieved promotion:", promotion);
+
+    return NextResponse.json(promotion);
+  } catch (error) {
+    console.error("Error retrieving promotion:", error);
+    return NextResponse.json(
+      { message: "Error retrieving promotion", error },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
@@ -44,6 +84,31 @@ export async function PATCH(
         { message: "Promotion not found" },
         { status: 404 }
       );
+    }
+
+    if (body.image === "" && promotion.image !== "") {
+      // Delete the image from Vercel Blob Storage
+      if (promotion.image) {
+        try {
+          await del(promotion.image);
+          console.log(
+            "Deleted image from Vercel Blob Storage:",
+            promotion.image
+          );
+        } catch (blobError) {
+          console.error(
+            "Error deleting image from Vercel Blob Storage:",
+            blobError
+          );
+          return NextResponse.json(
+            {
+              message: "Error deleting image from Vercel Blob Storage",
+              error: blobError,
+            },
+            { status: 500 }
+          );
+        }
+      }
     }
 
     await promotion.update(body);

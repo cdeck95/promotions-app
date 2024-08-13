@@ -30,6 +30,7 @@ import {
   LayoutDashboard,
   CirclePlus,
   Settings2Icon,
+  HandCoins,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -228,7 +229,22 @@ function MenuHeader() {
                 </Link>
               </Button>
             </DialogTrigger>
-            {(isAdmin || isReadOnly) && (
+            <DialogTrigger asChild>
+              <Button
+                asChild
+                variant={pathname === "/pricing" ? "secondary" : "ghost"}
+                className="w-full justify-start flex gap-2 my-1"
+              >
+                <Link
+                  href="/pricing"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                >
+                  <HandCoins className="h-4 w-4" />
+                  Pricing
+                </Link>
+              </Button>
+            </DialogTrigger>
+            {isAuthenticated && (isAdmin || isReadOnly) && (
               <>
                 <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
                   Admin Tools
@@ -252,23 +268,25 @@ function MenuHeader() {
                     </Button>
                   </DialogTrigger>
                 )}
-                <DialogTrigger asChild>
-                  <Button
-                    asChild
-                    variant={
-                      pathname === "/admin/settings" ? "secondary" : "ghost"
-                    }
-                    className="w-full justify-start flex gap-2 my-1"
-                  >
-                    <Link
-                      href="/admin/settings"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                {isAuthenticated && (isAdmin || isReadOnly) && (
+                  <DialogTrigger asChild>
+                    <Button
+                      asChild
+                      variant={
+                        pathname === "/admin/settings" ? "secondary" : "ghost"
+                      }
+                      className="w-full justify-start flex gap-2 my-1"
                     >
-                      <Settings2Icon className="h-4 w-4" />
-                      Settings
-                    </Link>
-                  </Button>
-                </DialogTrigger>
+                      <Link
+                        href="/admin/settings"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                      >
+                        <Settings2Icon className="h-4 w-4" />
+                        Settings
+                      </Link>
+                    </Button>
+                  </DialogTrigger>
+                )}
               </>
             )}
           </nav>

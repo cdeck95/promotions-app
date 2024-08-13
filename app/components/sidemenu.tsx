@@ -22,6 +22,7 @@ import {
   CalendarSearch,
   CirclePlus,
   Currency,
+  HandCoins,
   Home,
   LayoutDashboard,
   LineChart,
@@ -31,6 +32,7 @@ import {
   ScrollText,
   Settings,
   Settings2Icon,
+  SettingsIcon,
   ShieldCheck,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -52,6 +54,7 @@ import { KindeOrganization } from "../interfaces/KindeOrganization";
 import { KindeOrganizations } from "../interfaces/KindeOrganizations";
 import { DashboardIcon } from "@radix-ui/react-icons";
 import { access } from "fs";
+import { isArgumentsObject } from "util/types";
 
 interface ExtendedUser {
   id: string;
@@ -192,7 +195,20 @@ function SideMenu() {
                 Promos
               </Link>
             </Button>
-            {(isAdmin || isReadOnly) && (
+            <Button
+              asChild
+              variant={pathname === "/pricing" ? "secondary" : "ghost"}
+              className="w-full justify-start flex gap-2 my-1"
+            >
+              <Link
+                href="/pricing"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <HandCoins className="h-4 w-4" />
+                Pricing
+              </Link>
+            </Button>
+            {isAuthenticated && (isAdmin || isReadOnly) && (
               <>
                 <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">
                   Admin Tools
@@ -214,21 +230,40 @@ function SideMenu() {
                     </Link>
                   </Button>
                 )}
-                <Button
-                  asChild
-                  variant={
-                    pathname === "/admin/settings" ? "secondary" : "ghost"
-                  }
-                  className="w-full justify-start flex gap-2 my-1"
-                >
-                  <Link
-                    href="/admin/settings"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                {isAuthenticated && (isAdmin || isReadOnly) && (
+                  <Button
+                    asChild
+                    variant={
+                      pathname === "/admin/settings" ? "secondary" : "ghost"
+                    }
+                    className="w-full justify-start flex gap-2 my-1"
                   >
-                    <Settings2Icon className="h-4 w-4" />
-                    Settings
-                  </Link>
-                </Button>
+                    <Link
+                      href="/admin/settings"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <Settings2Icon className="h-4 w-4" />
+                      Settings
+                    </Link>
+                  </Button>
+                )}
+                {isAuthenticated && (isAdmin || isReadOnly) && (
+                  <Button
+                    asChild
+                    variant={
+                      pathname === "/admin/settings-2" ? "secondary" : "ghost"
+                    }
+                    className="w-full justify-start flex gap-2 my-1"
+                  >
+                    <Link
+                      href="/admin/settings-2"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <SettingsIcon className="h-4 w-4" />
+                      Settings (new)
+                    </Link>
+                  </Button>
+                )}
               </>
             )}
           </nav>
