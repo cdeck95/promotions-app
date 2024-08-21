@@ -28,19 +28,22 @@ export async function getGames({
     commenceTimeFrom,
     commenceTimeTo
 }: GetGamesParams): Promise<GetGamesReponse[]> {
-// const response = await api.get<GetGamesReponse[]>('', {
-//             params: {
-//                 apiKey,
-//                 regions,
-//                 markets,
-//                 dateFormat,
-//                 oddsFormat,
-//                 commenceTimeFrom,
-//                 commenceTimeTo
-//             }
-//         });
+    console.log(apiKey, regions, markets, dateFormat, oddsFormat, commenceTimeFrom, commenceTimeTo);
+const response = await api.get<GetGamesReponse[]>('', {
+            params: {
+                apiKey,
+                regions,
+                markets,
+                dateFormat,
+                oddsFormat,
+                commenceTimeFrom,
+                commenceTimeTo
+            }
+        });
 
-//         return response.data;
+        console.log(response.data); 
 
-   return data;
+        return response.data;
+
+  // return data;
 }
