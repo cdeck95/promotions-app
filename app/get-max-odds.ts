@@ -1,5 +1,5 @@
-import { bookmakerMap } from '../bookmaker-map';
-import { Game } from '../components/table-body';
+import { bookmakerMap } from './bookmaker-map';
+import { Game } from './components/table-body';
 
 type MaxOdd = {
     bookmakerKey: string;
