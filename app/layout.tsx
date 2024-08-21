@@ -8,6 +8,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Suspense } from "react";
+import QueryClientProvider from './providers/query-client-provider';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -78,6 +80,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <QueryClientProvider>
           <Toaster />
           <div className="flex row-auto w-full h-full">
             <SideMenu />
@@ -90,6 +93,7 @@ export default function RootLayout({
               </main>
             </div>
           </div>
+          </QueryClientProvider>
         </ThemeProvider>
       </body>
     </html>
